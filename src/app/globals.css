@@ -1,3 +1,83 @@
+/* Responsive styles for mobile */
+@media (max-width: 600px) {
+  .app-container {
+    max-width: 98vw;
+    margin: 16px auto;
+    padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+    border-radius: 14px;
+  }
+  .bot-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+  }
+  .app-container h1 {
+    font-size: 1.3rem;
+  }
+  .email-input,
+  .dropdown {
+    font-size: 15px;
+    padding: 0.6rem;
+    border-radius: 7px;
+  }
+  .send-btn {
+    font-size: 15px;
+    padding: 0.6rem 1rem;
+    border-radius: 7px;
+  }
+  .resume-download {
+    font-size: 13px;
+    padding: 0.5rem 0.7rem;
+    border-radius: 10px;
+  }
+  .resume-download a {
+    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 6px;
+  }
+}
+
+/* Dark theme overrides */
+@media (prefers-color-scheme: dark) {
+  .app-container {
+    background: rgba(10, 10, 10, 0.85);
+    border: 2px solid rgba(0, 114, 238, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  }
+  .app-container h1 {
+    color: #90cdf4;
+  }
+  .email-input,
+  .dropdown {
+    background: rgba(20, 20, 20, 0.95);
+    color: #ededed;
+    border: 1.5px solid #2b6cb0;
+  }
+  .email-input:focus,
+  .dropdown:focus {
+    border: 1.5px solid #90cdf4;
+    box-shadow: 0 0 0 2px #3182ce55;
+  }
+  .send-btn {
+    background: linear-gradient(90deg, #3182ce 60%, #63b3ed 100%);
+    color: #fff;
+  }
+  .send-btn:hover {
+    background: linear-gradient(90deg, #2b6cb0 60%, #4299e1 100%);
+  }
+  .resume-download {
+    background: rgba(49, 130, 206, 0.13);
+    color: #90cdf4;
+    border: 1.5px dashed #3182ce55;
+  }
+  .resume-download a {
+    background: linear-gradient(90deg, #38a169 60%, #68d391 100%);
+    color: #fff;
+  }
+  .resume-download a:hover {
+    background: linear-gradient(90deg, #276749 60%, #68d391 100%);
+  }
+}
 @import "tailwindcss";
 
 :root {
@@ -28,18 +108,50 @@ body {
 .app-container {
   max-width: 450px;
   margin: 80px auto;
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: sans-serif;
+  padding: 2.5rem 2rem 2rem 2rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(0, 114, 238, 0.15);
+  font-family: "Segoe UI", "Arial", sans-serif;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: bot-glow 2.5s infinite alternate;
+}
+
+@keyframes bot-glow {
+  0% {
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 0 0 0 #0072ee44;
+  }
+  100% {
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 0 24px 8px #0072ee33;
+  }
+}
+
+.bot-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0072ee 60%, #00c6fb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem auto;
+  box-shadow: 0 2px 12px #0072ee33;
+  font-size: 2.2rem;
+  color: #fff;
+  border: 3px solid #fff;
 }
 
 .app-container h1 {
-  color: #171717;
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+  color: #0072ee;
+  font-size: 2.1rem;
+  margin-bottom: 1.2rem;
+  font-family: "Baloo 2", "Segoe UI", Arial, sans-serif;
+  letter-spacing: 1px;
+  font-weight: 700;
 }
 
 .email-input,
@@ -48,42 +160,80 @@ body {
   margin-top: 1rem;
   padding: 0.75rem;
   font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  border-radius: 10px;
+  border: 1.5px solid #b3d1fa;
   color: #171717;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 4px #0072ee11;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.email-input:focus,
+.dropdown:focus {
+  border: 1.5px solid #0072ee;
+  outline: none;
+  box-shadow: 0 0 0 2px #0072ee33;
 }
 
 .send-btn {
   margin-top: 1.5rem;
   padding: 0.75rem 1.5rem;
-  background-color: #0072ee;
+  background: linear-gradient(90deg, #0072ee 60%, #00c6fb 100%);
   color: white;
-  font-size: 16px;
+  font-size: 17px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 2px 8px #0072ee22;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
 }
-
 .send-btn:hover {
-  background-color: #005ed8;
+  background: linear-gradient(90deg, #005ed8 60%, #00b6e0 100%);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px #0072ee33;
 }
 
-.resume-section {
-  margin-top: 1rem;
-  font-size: 14px;
-  text-align: left;
+.resume-download {
+  margin: 1.2rem auto 1.5rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 114, 238, 0.07);
+  border-radius: 18px;
+  padding: 0.7rem 1.2rem;
+  font-size: 15px;
+  color: #0072ee;
+  box-shadow: 0 1px 6px #0072ee11;
+  width: fit-content;
+  gap: 0.5rem;
+  border: 1.5px dashed #0072ee33;
+  animation: chat-bubble-fade 0.7s;
 }
-
-.resume-link {
+.resume-download a {
   display: inline-block;
-  margin-top: 6px;
-  background-color: #28a745;
+  margin-left: 8px;
+  background: linear-gradient(90deg, #28a745 60%, #43e97b 100%);
   color: white;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
   text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px #28a74522;
+}
+.resume-download a:hover {
+  background: linear-gradient(90deg, #218838 60%, #43e97b 100%);
+  box-shadow: 0 2px 8px #28a74533;
 }
 
-.resume-link:hover {
-  background-color: #218838;
+@keyframes chat-bubble-fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

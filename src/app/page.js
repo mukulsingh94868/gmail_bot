@@ -30,7 +30,7 @@ export default function Home() {
       <select
         value={position}
         onChange={(e) => setPosition(e.target.value)}
-        className="border border-gray-400 rounded p-2 w-full mb-4 text-black"
+        className="dropdown"
       >
         <option value="">Select Position</option>
         {Object.keys(jobApplicationData).map((pos) => (
