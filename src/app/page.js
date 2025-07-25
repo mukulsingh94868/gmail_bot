@@ -88,47 +88,40 @@ const HRBotApp = () => {
       </button>
 
       {history?.length > 0 && (
-        <div style={{ marginTop: 24, textAlign: "left" }}>
-          <h3
-            style={{
-              fontSize: 16,
-              color: "#0072ee",
-              marginBottom: 8,
-            }}
-          >
-            Recent Activity
-          </h3>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+        <div className="recent-activity">
+          <h3 className="recent-activity-title">Recent Activity</h3>
+          <ul className="recent-activity-list">
             {history?.map((item, idx) => (
-              <li
-                key={idx}
-                style={{
-                  background: "rgba(0,114,238,0.07)",
-                  borderRadius: 8,
-                  padding: "8px 12px",
-                  marginBottom: 6,
-                  fontSize: 14,
-                  color: "#171717",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 2,
-                  boxShadow: "0 1px 4px #0072ee11",
-                }}
-              >
-                <span>
-                  <b>To:</b> {item?.email}
-                </span>
-                <span>
-                  <b>Position:</b> {item?.position}
-                </span>
-                <span style={{ fontSize: 12, color: "#888" }}>
-                  {item?.date}
-                </span>
+              <li key={idx} className="recent-activity-item">
+                <span><b>To:</b> {item?.email}</span>
+                <span><b>Position:</b> {item?.position}</span>
+                <span className="recent-activity-date">{item?.date}</span>
               </li>
             ))}
           </ul>
         </div>
       )}
+      {/* FAQ/Help Section */}
+      <div className="faq-section">
+        <details className="faq-details">
+          <summary className="faq-summary">❓ FAQ / Help</summary>
+          <div className="faq-content">
+            <b>How do I use the HR Email Bot?</b>
+            <ul className="faq-list">
+              <li>Select the job position from the dropdown.</li>
+              <li>Paste the HR's email address.</li>
+              <li>Click "Send Email" to open Gmail with a pre-filled message.</li>
+              <li>Download your resume if needed.</li>
+            </ul>
+            <b>What is Recent Activity?</b>
+            <div className="faq-answer">Shows the last 5 emails you sent using this bot.</div>
+            <b>Is my data safe?</b>
+            <div className="faq-answer">Your email history is stored only in your browser and never sent to any server.</div>
+            <b>Need more help?</b>
+            <div className="faq-answer">Contact your developer or HR for further assistance.</div>
+          </div>
+        </details>
+      </div>
     </div>
   );
 };

@@ -1,3 +1,63 @@
+/* Recent Activity Styles */
+.recent-activity {
+  margin-top: 24px;
+  text-align: left;
+}
+.recent-activity-title {
+  font-size: 16px;
+  color: #0072ee;
+  margin-bottom: 8px;
+}
+.recent-activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.recent-activity-item {
+  background: rgba(0, 114, 238, 0.07);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #171717;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 1px 4px #0072ee11;
+}
+.recent-activity-date {
+  font-size: 12px;
+  color: #888;
+}
+
+/* FAQ/Help Section Styles */
+.faq-section {
+  margin-top: 32px;
+}
+.faq-details {
+  background: rgba(0, 114, 238, 0.07);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 4px #0072ee11;
+  color: #171717;
+  font-size: 15px;
+}
+.faq-summary {
+  font-weight: 600;
+  color: #0072ee;
+  font-size: 16px;
+  cursor: pointer;
+}
+.faq-content {
+  margin-top: 12px;
+}
+.faq-list {
+  margin: 8px 0 16px 18px;
+  padding: 0;
+}
+.faq-answer {
+  margin: 8px 0 16px 0;
+}
 /* Responsive styles for mobile */
 @media (max-width: 600px) {
   .app-container {
