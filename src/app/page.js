@@ -1,126 +1,137 @@
 "use client";
+
 import { useState } from "react";
-import jobApplicationData from "./constants/data";
+import toast from "react-hot-toast";
 
 const HRBotApp = () => {
-  const [email, setEmail] = useState("");
-  const [position, setPosition] = useState("");
-  const [history, setHistory] = useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("hrbot-history");
-        return saved ? JSON.parse(saved) : [];
-      } catch {
-        return [];
-      }
-    }
-    return [];
+  const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
+  const [message, setMessage] = useState("");
 
-  const selectedData = jobApplicationData[position];
+  const handleToggle = () => {
+    setIsLogin(!isLogin);
+    setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+  };
 
-  const handleSendEmail = () => {
-    if (!email || !selectedData) {
-      alert("Please enter email and select position.");
-      return;
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const endpoint = isLogin
+      ? "http://localhost:5000/api/auth/login"
+      : "http://localhost:5000/api/auth/register";
+
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      return setMessage("Passwords do not match");
     }
 
-    const gmailURL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(
-      selectedData?.subject)}&body=${encodeURIComponent(selectedData?.body)}`;
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(
+          isLogin
+            ? {
+                email: formData.email,
+                password: formData.password,
+              }
+            : {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+              }
+        ),
+      });
 
-    window.open(gmailURL, "_blank");
+      const data = await res.json();
 
-    const newEntry = {
-      email,
-      position,
-      date: new Date().toLocaleString(),
-    };
-    const newHistory = [newEntry, ...history]?.slice(0, 5); // keep last 5
-    setHistory(newHistory);
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("hrbot-history", JSON.stringify(newHistory));
-      } catch { }
+      if (!res.ok) {
+        toast.error(data.message);
+      } else {
+        toast.success(data.message || "Success");
+        if (isLogin && data.token) {
+          localStorage.setItem("token", data.token);
+        }
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      setMessage("Network error");
     }
   };
 
   return (
-    <div className="app-container">
-      <h1>📧 HR Email Bot</h1>
-
-      <select
-        value={position}
-        onChange={(e) => setPosition(e.target.value)}
-        className="dropdown"
-      >
-        <option value="">Select Position</option>
-        {Object.keys(jobApplicationData)?.map((pos) => (
-          <option key={pos} value={pos}>
-            {pos}
-          </option>
-        ))}
-      </select>
-
-      <input
-        type="email"
-        placeholder="Paste HR Email here"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="email-input"
-      />
-
-      {selectedData && (
-        <div className="resume-download">
-          📎 Resume:
-          <a
-            href={selectedData.resume}
-            download
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 px-4">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
+        <h2 className="text-xl font-bold mb-4 text-center">
+          {isLogin ? "Login" : "Register"}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && (
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              className="w-full border px-3 py-2 rounded"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          )}
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="w-full border px-3 py-2 rounded"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="w-full border px-3 py-2 rounded"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          {!isLogin && (
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              className="w-full border px-3 py-2 rounded"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          )}
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
           >
-            Download Resume
-          </a>
-        </div>
-      )}
+            {isLogin ? "Login" : "Register"}
+          </button>
+        </form>
 
-      <button onClick={handleSendEmail} className="send-btn">
-        ✉️ Send Email
-      </button>
-
-      {history?.length > 0 && (
-        <div className="recent-activity">
-          <h3 className="recent-activity-title">Recent Activity</h3>
-          <ul className="recent-activity-list">
-            {history?.map((item, idx) => (
-              <li key={idx} className="recent-activity-item">
-                <span><b>To:</b> {item?.email}</span>
-                <span><b>Position:</b> {item?.position}</span>
-                <span className="recent-activity-date">{item?.date}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {/* FAQ/Help Section */}
-      <div className="faq-section">
-        <details className="faq-details">
-          <summary className="faq-summary">❓ FAQ / Help</summary>
-          <div className="faq-content">
-            <b>How do I use the HR Email Bot?</b>
-            <ul className="faq-list">
-              <li>Select the job position from the dropdown.</li>
-              <li>Paste the HR's email address.</li>
-              <li>Click "Send Email" to open Gmail with a pre-filled message.</li>
-              <li>Download your resume if needed.</li>
-            </ul>
-            <b>What is Recent Activity?</b>
-            <div className="faq-answer">Shows the last 5 emails you sent using this bot.</div>
-            <b>Is my data safe?</b>
-            <div className="faq-answer">Your email history is stored only in your browser and never sent to any server.</div>
-            <b>Need more help?</b>
-            <div className="faq-answer">Contact your developer or HR for further assistance.</div>
-          </div>
-        </details>
+        <p className="mt-4 text-center text-sm">
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          <button
+            type="button"
+            onClick={handleToggle}
+            className="text-blue-600 hover:underline"
+          >
+            {isLogin ? "Register" : "Login"}
+          </button>
+        </p>
       </div>
     </div>
   );
