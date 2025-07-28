@@ -81,7 +81,7 @@ const HRBotApp = () => {
   return (
     <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 px-4">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h2 className="text-xl font-bold mb-4 text-center">
+        <h2 className="text-xl font-bold mb-4 text-center text-black">
           {isLogin ? "Login" : "Register"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -90,7 +90,7 @@ const HRBotApp = () => {
               type="text"
               name="name"
               placeholder="Name"
-              className="w-full border px-3 py-2 rounded"
+              className="w-full border px-3 py-2 rounded text-black"
               value={formData.name}
               onChange={handleChange}
               required
@@ -100,7 +100,7 @@ const HRBotApp = () => {
             type="email"
             name="email"
             placeholder="Email"
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border px-3 py-2 rounded text-black"
             value={formData.email}
             onChange={handleChange}
             required
@@ -109,7 +109,7 @@ const HRBotApp = () => {
             type="password"
             name="password"
             placeholder="Password"
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border px-3 py-2 rounded text-black"
             value={formData.password}
             onChange={handleChange}
             required
@@ -119,7 +119,7 @@ const HRBotApp = () => {
               type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
-              className="w-full border px-3 py-2 rounded"
+              className="w-full border px-3 py-2 rounded text-black"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
@@ -127,13 +127,13 @@ const HRBotApp = () => {
           )}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            className="w-full text-black bg-blue-600 py-2 rounded hover:bg-blue-700"
           >
             {isLogin ? "Login" : "Register"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-4 text-center text-sm text-black">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button
             type="button"

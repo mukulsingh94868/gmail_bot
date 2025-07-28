@@ -5,15 +5,15 @@ import Faq from "../Faq";
 import AddPositionModal from "../Modal/Modal";
 import { apiRequest } from "@/api/api";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const AddPosition = () => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [position, setPosition] = useState("");
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [selectedData, setSelectedData] = useState(null);
-
   const [history, setHistory] = useState([]);
-
   const [showModal, setShowModal] = useState(false);
   const [positionOptions, setPositionOptions] = useState([]);
 
@@ -21,57 +21,49 @@ const AddPosition = () => {
     const fetchOptions = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const result = await apiRequest({
           url: "http://localhost:5000/api/position/options",
           method: "GET",
-          token: token,
+          token,
         });
-
         if (result?.statusCode === 200) {
           setPositionOptions(result?.data || []);
         } else {
-          console.error("Failed to fetch positions:", result?.message);
+          toast.error(result?.message || "Failed to fetch positions");
         }
       } catch (err) {
-        console.error("Network error:", err);
+        toast.error("Network error fetching positions");
       }
     };
-
     fetchOptions();
   }, []);
 
   const handlePositionChange = async (e) => {
     const selectedName = e.target.value;
     setPosition(selectedName);
-
     const selected = positionOptions.find((opt) => opt.name === selectedName);
     if (!selected?._id) return;
-
     setSelectedPositionId(selected._id);
-
     try {
       const token = localStorage.getItem("token");
-
       const result = await apiRequest({
         url: `http://localhost:5000/api/position/postionRecord/${selected._id}`,
         method: "GET",
-        token: token,
+        token,
       });
-
       if (result?.statusCode === 200) {
         setSelectedData(result?.data || {});
       } else {
-        console.error("Failed to fetch position details:", result?.message);
+        toast.error(result?.message || "Failed to fetch position data");
       }
     } catch (err) {
-      console.error("Network error:", err);
+      toast.error("Error loading position data");
     }
   };
 
   const handleSendEmail = async () => {
     if (!email || !selectedData || !position) {
-      alert("Please enter email and select position.");
+      toast.error("Please enter email and select position.");
       return;
     }
 
@@ -80,11 +72,10 @@ const AddPosition = () => {
     )}&su=${encodeURIComponent(
       selectedData?.[0]?.emailSubject
     )}&body=${encodeURIComponent(selectedData?.[0]?.emailBody)}`;
-
     window.open(gmailURL, "_blank");
+
     try {
       const token = localStorage.getItem("token");
-
       const result = await apiRequest({
         url: "http://localhost:5000/api/apply/position-applied",
         method: "POST",
@@ -93,65 +84,81 @@ const AddPosition = () => {
           positionApplied: position,
           dateAndTime: new Date().toISOString(),
         },
-        token: token,
+        token,
       });
 
       if (result?.statusCode === 201) {
-        toast.success(result?.message || "Successfully Sended Mail");
+        toast.success(result?.message || "Successfully sent email");
       } else {
-        toast.error(result?.message || "Failed to add position");
+        toast.error(result?.message || "Failed to record position");
       }
     } catch (error) {
-      console.error("API error while saving applied position:", error);
+      toast.error("Error recording applied position");
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    toast.success("Logged out successfully");
+    router.push("/");
   };
 
   useEffect(() => {
     const fetchAppliedData = async () => {
       try {
         const token = localStorage.getItem("token");
-
         const result = await apiRequest({
           url: "http://localhost:5000/api/apply/get-position-applied",
           method: "GET",
-          token: token,
+          token,
         });
-
         if (result?.statusCode === 200) {
           setHistory(result?.data || []);
         } else {
-          console.error("Failed to fetch positions:", result?.message);
+          toast.error(result?.message || "Failed to fetch history");
         }
       } catch (err) {
-        console.error("Network error:", err);
+        toast.error("Error loading history");
       }
     };
-
     fetchAppliedData();
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 flex flex-col items-center py-8 px-2">
-      <div className="w-full max-w-3xl p-8 flex flex-col items-center">
-        <button
-          className="mb-6 px-6 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition"
-          onClick={() => setShowModal(true)}
-        >
-          ➕ Add Position
-        </button>
+    <div className="min-h-screen w-full bg-gradient-to-r from-indigo-100 to-blue-200 px-4 py-6">
+      <div className="flex justify-between items-center mb-6 max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold text-blue-800">📧 HR Email Bot</h1>
+        <div className="flex gap-3">
+          <button
+            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-xl shadow"
+            onClick={() => setShowModal(true)}
+          >
+            ➕ Add Position
+          </button>
+          <button
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-xl shadow"
+            onClick={() => router.push("/template-listing")}
+          >
+            📋 Templates Listing
+          </button>
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-xl shadow"
+            onClick={handleLogout}
+          >
+            🚪 Logout
+          </button>
+        </div>
+      </div>
 
-        {showModal && (
-          <AddPositionModal setShowModal={setShowModal} showModal={showModal} />
-        )}
+      {showModal && (
+        <AddPositionModal setShowModal={setShowModal} showModal={showModal} />
+      )}
 
-        <h1 className="text-3xl font-bold text-blue-700 mb-6 text-center">
-          📧 HR Email Bot
-        </h1>
-
+      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-5">
         <select
           value={position}
           onChange={handlePositionChange}
-          className="w-full mb-4 p-3 rounded-lg border border-blue-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50"
+          className="w-full p-3 text-black rounded-lg border border-blue-300 bg-blue-50 focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Select Position</option>
           {positionOptions.map((pos) => (
@@ -166,50 +173,50 @@ const AddPosition = () => {
           placeholder="Paste HR Email here"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full mb-4 p-3 rounded-lg border border-blue-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-blue-50"
+          className="w-full text-black p-3 rounded-lg border border-blue-300 bg-blue-50 focus:ring-2 focus:ring-blue-500"
         />
 
-        {selectedData && (
-          <div className="w-full flex flex-col items-start bg-blue-50 rounded-lg p-4 mb-4 border border-blue-100">
-            <span className="text-blue-700 font-semibold mb-2">📎 Resume:</span>
+        {/* {selectedData && (
+          <div className="bg-blue-100 rounded-lg p-4">
+            <p className="font-semibold text-blue-700">📎 Resume:</p>
             <a
               href={selectedData.resume}
               download
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition"
+              className="inline-block mt-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
             >
               Download Resume
             </a>
           </div>
-        )}
+        )} */}
 
         <button
           onClick={handleSendEmail}
-          className="w-full mt-2 mb-6 p-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow hover:bg-blue-700 transition"
+          className="w-full py-3 bg-blue-700 text-white font-bold rounded-lg hover:bg-blue-800"
         >
           ✉️ Send Email
         </button>
 
         {history?.length > 0 && (
-          <div className="w-full bg-blue-50 rounded-xl p-4 mb-6 border border-blue-100">
-            <h3 className="text-lg font-bold text-blue-700 mb-3">
-              Recent Activity
+          <div className="mt-6">
+            <h3 className="text-xl font-bold text-blue-800 mb-3">
+              📜 Recent Activity
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {history?.map((item, idx) => (
                 <li
                   key={idx}
-                  className="bg-white rounded-lg p-3 shadow flex flex-col text-gray-700"
+                  className="bg-white p-4 rounded-lg text-black shadow-md border border-blue-100"
                 >
-                  <span>
-                    <b>To:</b> {item?.emailApplied}
-                  </span>
-                  <span>
-                    <b>Position:</b> {item?.positionApplied}
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    {new Date(item?.dateAndTime).toLocaleString("en-GB", {
+                  <p>
+                    <b>To:</b> {item.emailApplied}
+                  </p>
+                  <p>
+                    <b>Position:</b> {item.positionApplied}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(item.dateAndTime).toLocaleString("en-GB", {
                       day: "2-digit",
                       month: "2-digit",
                       year: "numeric",
@@ -217,16 +224,12 @@ const AddPosition = () => {
                       minute: "2-digit",
                       hour12: true,
                     })}
-                  </span>
+                  </p>
                 </li>
               ))}
             </ul>
           </div>
         )}
-
-        <div className="w-full">
-          <Faq />
-        </div>
       </div>
     </div>
   );
