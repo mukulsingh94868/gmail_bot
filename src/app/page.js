@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 const HRBotApp = () => {
+  const router = useRouter();
+
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
@@ -11,7 +14,6 @@ const HRBotApp = () => {
     password: "",
     confirmPassword: "",
   });
-  const [message, setMessage] = useState("");
 
   const handleToggle = () => {
     setIsLogin(!isLogin);
@@ -30,7 +32,7 @@ const HRBotApp = () => {
       : "http://localhost:5000/api/auth/register";
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
-      return setMessage("Passwords do not match");
+      return toast.error("Passwords do not match");
     }
 
     try {
@@ -54,16 +56,25 @@ const HRBotApp = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.message);
-      } else {
-        toast.success(data.message || "Success");
-        if (isLogin && data.token) {
+        toast.error(data.message || "Something went wrong");
+        return;
+      }
+
+      toast.success(data.message || (isLogin ? "Login successful" : "Registration successful"));
+
+      if (isLogin) {
+        if (data.token) {
           localStorage.setItem("token", data.token);
+          router.push("/position"); // ✅ Redirect after login
         }
+      } else {
+        // ✅ Switch to login after successful registration
+        setIsLogin(true);
+        setFormData({ name: "", email: "", password: "", confirmPassword: "" });
       }
     } catch (err) {
       console.error("Error:", err);
-      setMessage("Network error");
+      toast.error("Network error");
     }
   };
 
