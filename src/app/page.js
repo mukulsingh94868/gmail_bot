@@ -127,7 +127,7 @@ const HRBotApp = () => {
           )}
           <button
             type="submit"
-            className="w-full text-black bg-blue-600 py-2 rounded hover:bg-blue-700"
+            className="w-full text-white bg-blue-600 py-2 rounded hover:bg-blue-700"
           >
             {isLogin ? "Login" : "Register"}
           </button>
