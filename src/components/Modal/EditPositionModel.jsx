@@ -28,12 +28,10 @@ export const EditPositionModal = ({ setShowModal, editData, refreshList }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
       const result = await apiRequest({
-        url: `http://localhost:5000/api/position/editUserPositions/${editData._id}`,
+        url: `position/editUserPositions/${editData._id}`,
         method: "PUT",
         body: formData,
-        token,
       });
 
       if (result?.statusCode === 200) {

@@ -6,8 +6,10 @@ import AddPositionModal from "../Modal/Modal";
 import { apiRequest } from "@/api/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+// import { removeAuthToken } from "@/utils/CookieData";
 
-const AddPosition = () => {
+const AddPosition = (props) => {
+  // const { fetchOptionsData } = props;
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [position, setPosition] = useState("");
@@ -17,14 +19,14 @@ const AddPosition = () => {
   const [showModal, setShowModal] = useState(false);
   const [positionOptions, setPositionOptions] = useState([]);
 
+  // console.log('fetchOptionsData', fetchOptionsData);
+
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const token = localStorage.getItem("token");
         const result = await apiRequest({
-          url: "http://localhost:5000/api/position/options",
+          url: "position/options",
           method: "GET",
-          token,
         });
         if (result?.statusCode === 200) {
           setPositionOptions(result?.data || []);
@@ -45,11 +47,9 @@ const AddPosition = () => {
     if (!selected?._id) return;
     setSelectedPositionId(selected._id);
     try {
-      const token = localStorage.getItem("token");
       const result = await apiRequest({
-        url: `http://localhost:5000/api/position/postionRecord/${selected._id}`,
+        url: `position/postionRecord/${selected._id}`,
         method: "GET",
-        token,
       });
       if (result?.statusCode === 200) {
         setSelectedData(result?.data || {});
@@ -75,16 +75,14 @@ const AddPosition = () => {
     window.open(gmailURL, "_blank");
 
     try {
-      const token = localStorage.getItem("token");
       const result = await apiRequest({
-        url: "http://localhost:5000/api/apply/position-applied",
+        url: "apply/position-applied",
         method: "POST",
         body: {
           emailApplied: email,
           positionApplied: position,
           dateAndTime: new Date().toISOString(),
-        },
-        token,
+        }
       });
 
       if (result?.statusCode === 201) {
@@ -99,6 +97,7 @@ const AddPosition = () => {
 
   const handleLogout = () => {
     localStorage.clear();
+    // removeAuthToken();
     toast.success("Logged out successfully");
     router.push("/");
   };
@@ -106,11 +105,9 @@ const AddPosition = () => {
   useEffect(() => {
     const fetchAppliedData = async () => {
       try {
-        const token = localStorage.getItem("token");
         const result = await apiRequest({
-          url: "http://localhost:5000/api/apply/get-position-applied",
+          url: "apply/get-position-applied",
           method: "GET",
-          token,
         });
         if (result?.statusCode === 200) {
           setHistory(result?.data || []);

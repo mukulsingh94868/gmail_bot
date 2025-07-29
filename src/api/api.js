@@ -1,10 +1,13 @@
-// utils/api.js
+
+
 export const apiRequest = async ({
   url,
   method = "GET",
   body = null,
-  token = "",
 }) => {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
+  // const token = getAuthToken();
+
   const headers = {
     "Content-Type": "application/json",
   };
@@ -21,18 +24,17 @@ export const apiRequest = async ({
   if (body) {
     options.body = JSON.stringify(body);
   }
-
   try {
-    const response = await fetch(url, options);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP}/${url}`, options);
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || "API request failed");
+      throw new Error(data?.message || "API request failed");
     }
 
     return data;
   } catch (error) {
-    console.error("API Error:", error);
+    console.error("API Error:", error.message);
     throw error;
   }
 };

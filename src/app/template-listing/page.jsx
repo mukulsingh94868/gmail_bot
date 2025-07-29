@@ -16,11 +16,9 @@ const TemplatesListing = () => {
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
-        const token = localStorage.getItem("token");
         const result = await apiRequest({
-          url: "http://localhost:5000/api/position/getUserPositions",
+          url: "position/getUserPositions",
           method: "GET",
-          token,
         });
 
         if (result?.statusCode === 200) {
@@ -38,11 +36,9 @@ const TemplatesListing = () => {
 
   const handleEdit = async (id) => {
     try {
-      const token = localStorage.getItem("token");
       const result = await apiRequest({
-        url: `http://localhost:5000/api/position/getUserPositionsById/${id}`,
+        url: `position/getUserPositionsById/${id}`,
         method: "GET",
-        token,
       });
 
       if (result?.statusCode === 200) {
@@ -61,22 +57,17 @@ const TemplatesListing = () => {
       return;
 
     try {
-      const token = localStorage.getItem("token");
-
       const result = await apiRequest({
-        url: `http://localhost:5000/api/position/deleteUserPositions/${id}`,
+        url: `position/deleteUserPositions/${id}`,
         method: "DELETE",
-        token,
       });
 
       if (result?.statusCode === 200) {
         toast.success(result?.message || "Position deleted successfully");
         // Refresh the list after deletion
-        const token = localStorage.getItem("token");
         const res = await apiRequest({
-          url: "http://localhost:5000/api/position/getUserPositions",
+          url: "position/getUserPositions",
           method: "GET",
-          token,
         });
         if (res?.statusCode === 200) {
           setTemplates(res.data || []);
@@ -155,12 +146,9 @@ const TemplatesListing = () => {
           setShowModal={setShowEditModal}
           editData={currentEditData}
           refreshList={() => {
-            // re-fetch templates
-            const token = localStorage.getItem("token");
             apiRequest({
-              url: "http://localhost:5000/api/position/getUserPositions",
+              url: "position/getUserPositions",
               method: "GET",
-              token,
             }).then((result) => {
               if (result?.statusCode === 200) {
                 setTemplates(result?.data || []);

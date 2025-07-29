@@ -65,10 +65,10 @@ const HRBotApp = () => {
       if (isLogin) {
         if (data.token) {
           localStorage.setItem("token", data.token);
-          router.push("/position"); // ✅ Redirect after login
+          // setAuthToken(data.token);
+          router.push("/position");
         }
       } else {
-        // ✅ Switch to login after successful registration
         setIsLogin(true);
         setFormData({ name: "", email: "", password: "", confirmPassword: "" });
       }

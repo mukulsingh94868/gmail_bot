@@ -15,13 +15,11 @@ const AddPositionModal = (props) => {
   const handleAddPosition = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
 
       const result = await apiRequest({
-        url: "http://localhost:5000/api/position/positionApply",
+        url: "position/positionApply",
         method: "POST",
         body: positionApplied,
-        token: token,
       });
       if (result?.statusCode === 200) {
         toast.success(result?.message || "Position added successfully");
