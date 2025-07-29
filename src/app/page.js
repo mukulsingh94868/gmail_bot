@@ -28,8 +28,8 @@ const HRBotApp = () => {
     e.preventDefault();
 
     const endpoint = isLogin
-      ? "http://localhost:5000/api/auth/login"
-      : "http://localhost:5000/api/auth/register";
+      ? `${process.env.NEXT_PUBLIC_APP}/api/auth/login`
+      : `${process.env.NEXT_PUBLIC_APP}/api/auth/register`;
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
       return toast.error("Passwords do not match");
