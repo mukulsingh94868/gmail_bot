@@ -25,7 +25,7 @@ export const apiRequest = async ({
     options.body = JSON.stringify(body);
   }
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP}/${url}`, options);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP}/api/${url}`, options);
     const data = await response.json();
 
     if (!response.ok) {
