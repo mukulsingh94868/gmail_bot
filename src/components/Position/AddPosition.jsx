@@ -122,97 +122,85 @@ const AddPosition = (props) => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-r from-indigo-100 to-blue-200 px-4 py-6">
-      <div className="flex justify-between items-center mb-6 max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-blue-800">📧 HR Email Bot</h1>
-        <div className="flex gap-3">
-          <button
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-xl shadow"
-            onClick={() => setShowModal(true)}
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-100 via-blue-50 to-gray-200 px-4 py-10">
+      <div className="max-w-6xl mx-auto space-y-10">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <h1 className="text-4xl font-bold text-slate-800 flex items-center gap-2">
+            📧 <span>RecruitLoop</span>
+          </h1>
+          <div className="flex flex-wrap gap-3">
+            <button
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-full shadow transition-all"
+              onClick={() => setShowModal(true)}
+            >
+              ➕ Add Position
+            </button>
+            <button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-full shadow transition-all"
+              onClick={() => router.push("/template-listing")}
+            >
+              📋 Templates
+            </button>
+            <button
+              className="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-5 py-2.5 rounded-full shadow transition-all"
+              onClick={handleLogout}
+            >
+              🚪 Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Form Card */}
+        <div className="max-w-3xl mx-auto bg-white border border-gray-200 shadow-md rounded-2xl px-6 py-8 space-y-6">
+          <select
+            value={position}
+            onChange={handlePositionChange}
+            className="w-full p-3 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            ➕ Add Position
-          </button>
+            <option value="">Select Position</option>
+            {positionOptions.map((pos) => (
+              <option key={pos._id} value={pos.name}>
+                {pos.name}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="email"
+            placeholder="Enter HR Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+
           <button
-            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-xl shadow"
-            onClick={() => router.push("/template-listing")}
+            onClick={handleSendEmail}
+            className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all shadow"
           >
-            📋 Templates Listing
-          </button>
-          <button
-            className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-xl shadow"
-            onClick={handleLogout}
-          >
-            🚪 Logout
+            ✉️ Send Email
           </button>
         </div>
-      </div>
 
-      {showModal && (
-        <AddPositionModal setShowModal={setShowModal} showModal={showModal} />
-      )}
-
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-5">
-        <select
-          value={position}
-          onChange={handlePositionChange}
-          className="w-full p-3 text-black rounded-lg border border-blue-300 bg-blue-50 focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select Position</option>
-          {positionOptions.map((pos) => (
-            <option key={pos._id} value={pos.name}>
-              {pos.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="email"
-          placeholder="Paste HR Email here"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full text-black p-3 rounded-lg border border-blue-300 bg-blue-50 focus:ring-2 focus:ring-blue-500"
-        />
-
-        {/* {selectedData && (
-          <div className="bg-blue-100 rounded-lg p-4">
-            <p className="font-semibold text-blue-700">📎 Resume:</p>
-            <a
-              href={selectedData.resume}
-              download
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-            >
-              Download Resume
-            </a>
-          </div>
-        )} */}
-
-        <button
-          onClick={handleSendEmail}
-          className="w-full py-3 bg-blue-700 text-white font-bold rounded-lg hover:bg-blue-800"
-        >
-          ✉️ Send Email
-        </button>
-
+        {/* Activity Section */}
         {history?.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-xl font-bold text-blue-800 mb-3">
-              📜 Recent Activity
+          <div className="max-w-3xl mx-auto mt-12">
+            <h3 className="text-2xl font-semibold text-slate-800 mb-5 flex items-center gap-2">
+              📜 <span>Recent Activity</span>
             </h3>
-            <ul className="space-y-3">
-              {history?.map((item, idx) => (
+            <ul className="space-y-4">
+              {history.map((item, idx) => (
                 <li
                   key={idx}
-                  className="bg-white p-4 rounded-lg text-black shadow-md border border-blue-100"
+                  className="bg-white shadow-sm rounded-lg p-5 border border-gray-100 hover:shadow-md transition"
                 >
-                  <p>
-                    <b>To:</b> {item.emailApplied}
+                  <p className="text-sm text-gray-800">
+                    <strong>To:</strong> {item.emailApplied}
                   </p>
-                  <p>
-                    <b>Position:</b> {item.positionApplied}
+                  <p className="text-sm text-gray-800">
+                    <strong>Position:</strong> {item.positionApplied}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 mt-1">
                     {new Date(item.dateAndTime).toLocaleString("en-GB", {
                       day: "2-digit",
                       month: "2-digit",
@@ -228,6 +216,11 @@ const AddPosition = (props) => {
           </div>
         )}
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <AddPositionModal showModal={showModal} setShowModal={setShowModal} />
+      )}
     </div>
   );
 };

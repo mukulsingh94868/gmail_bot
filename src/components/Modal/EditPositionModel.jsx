@@ -1,8 +1,3 @@
-import toast from "react-hot-toast";
-
-const { apiRequest } = require("@/api/api");
-const { useState, useEffect } = require("react");
-
 export const EditPositionModal = ({ setShowModal, editData, refreshList }) => {
   const [formData, setFormData] = useState({
     position: "",
@@ -37,7 +32,7 @@ export const EditPositionModal = ({ setShowModal, editData, refreshList }) => {
       if (result?.statusCode === 200) {
         toast.success(result.message || "Position updated");
         setShowModal(false);
-        refreshList(); // to re-fetch templates
+        refreshList();
       } else {
         toast.error(result.message || "Update failed");
       }
@@ -47,49 +42,63 @@ export const EditPositionModal = ({ setShowModal, editData, refreshList }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold text-blue-700 mb-4 text-center">
-          ✏️ Edit Position
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
+      <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-8">
+        <h2 className="text-2xl font-bold text-blue-800 mb-6 text-center flex items-center justify-center gap-2">
+          ✏️ <span>Edit Position</span>
         </h2>
-        <form onSubmit={handleUpdate} className="flex flex-col gap-4">
-          <input
-            type="text"
-            name="position"
-            placeholder="Position"
-            value={formData.position}
-            onChange={handleChange}
-            required
-            className="p-3 rounded-md border border-blue-200 text-black"
-          />
-          <input
-            type="text"
-            name="emailSubject"
-            placeholder="Email Subject"
-            value={formData.emailSubject}
-            onChange={handleChange}
-            required
-            className="p-3 rounded-md border border-blue-200 text-black"
-          />
-          <textarea
-            name="emailBody"
-            placeholder="Email Body"
-            value={formData.emailBody}
-            onChange={handleChange}
-            required
-            className="p-3 rounded-md border border-blue-200 text-black"
-          />
-          <div className="flex justify-end gap-4 mt-2">
+
+        <form onSubmit={handleUpdate} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Position</label>
+            <input
+              type="text"
+              name="position"
+              placeholder="e.g. React Developer"
+              value={formData.position}
+              onChange={handleChange}
+              required
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email Subject</label>
+            <input
+              type="text"
+              name="emailSubject"
+              placeholder="e.g. Application for React Role"
+              value={formData.emailSubject}
+              onChange={handleChange}
+              required
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email Body</label>
+            <textarea
+              name="emailBody"
+              placeholder="Write email body..."
+              rows={5}
+              value={formData.emailBody}
+              onChange={handleChange}
+              required
+              className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={() => setShowModal(false)}
-              className="px-4 py-2 bg-gray-300 rounded-lg"
+              className="px-4 py-2 text-sm font-semibold rounded-lg bg-gray-200 hover:bg-gray-300 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+              className="px-5 py-2 text-sm font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition"
             >
               Save
             </button>
