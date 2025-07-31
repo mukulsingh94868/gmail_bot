@@ -1,4 +1,10 @@
-export const EditPositionModal = ({ setShowModal, editData, refreshList }) => {
+"use client";
+
+import { editUserPositions } from "@/actions/addPositionActions";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
+export const EditPositionModal = ({ setShowModal, editData }) => {
   const [formData, setFormData] = useState({
     position: "",
     emailSubject: "",
@@ -23,16 +29,16 @@ export const EditPositionModal = ({ setShowModal, editData, refreshList }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const result = await apiRequest({
-        url: `position/editUserPositions/${editData._id}`,
-        method: "PUT",
-        body: formData,
-      });
+      const result = await editUserPositions(`position/editUserPositions/${editData._id}`, formData);
+      // const result = await apiRequest({
+      //   url: `position/editUserPositions/${editData._id}`,
+      //   method: "PUT",
+      //   body: formData,
+      // });
 
       if (result?.statusCode === 200) {
-        toast.success(result.message || "Position updated");
+        toast.success(result?.message || "Position updated");
         setShowModal(false);
-        refreshList();
       } else {
         toast.error(result.message || "Update failed");
       }
