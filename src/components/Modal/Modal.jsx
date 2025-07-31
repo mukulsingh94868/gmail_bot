@@ -1,4 +1,5 @@
 "use client";
+import { positionApply } from "@/actions/addPositionActions";
 import { apiRequest } from "@/api/api";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -13,11 +14,12 @@ const AddPositionModal = ({ setShowModal }) => {
   const handleAddPosition = async (e) => {
     e.preventDefault();
     try {
-      const result = await apiRequest({
-        url: "position/positionApply",
-        method: "POST",
-        body: positionApplied,
-      });
+      const result = await positionApply('position/positionApply', positionApplied);
+      // const result = await apiRequest({
+      //   url: "position/positionApply",
+      //   method: "POST",
+      //   body: positionApplied,
+      // });
 
       if (result?.statusCode === 200) {
         toast.success(result?.message || "Position added successfully");

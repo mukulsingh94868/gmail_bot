@@ -1,29 +1,23 @@
-
-
 export const apiRequest = async ({
   url,
   method = "GET",
   body = null,
+  headers = {},
 }) => {
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
-  // const token = getAuthToken();
-
-  const headers = {
+  const finalHeaders = {
     "Content-Type": "application/json",
+    ...headers,
   };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
 
   const options = {
     method,
-    headers,
+    headers: finalHeaders,
   };
 
   if (body) {
     options.body = JSON.stringify(body);
   }
+
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_APP}/api/${url}`, options);
     const data = await response.json();

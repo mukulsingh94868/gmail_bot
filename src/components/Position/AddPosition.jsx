@@ -1,44 +1,24 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Faq from "../Faq";
-import AddPositionModal from "../Modal/Modal";
+import { getPositionChangeData, positionApplied } from "@/actions/addPositionActions";
 import { apiRequest } from "@/api/api";
-import toast from "react-hot-toast";
+import { removeAuthToken } from "@/utils/CookieData";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import AddPositionModal from "../Modal/Modal";
 // import { removeAuthToken } from "@/utils/CookieData";
 
 const AddPosition = (props) => {
-  // const { fetchOptionsData } = props;
+  const { fetchOptionsData, fetchAppliedDatas } = props;
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [position, setPosition] = useState("");
   const [selectedPositionId, setSelectedPositionId] = useState("");
   const [selectedData, setSelectedData] = useState(null);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState(fetchAppliedDatas);
   const [showModal, setShowModal] = useState(false);
-  const [positionOptions, setPositionOptions] = useState([]);
-
-  // console.log('fetchOptionsData', fetchOptionsData);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const result = await apiRequest({
-          url: "position/options",
-          method: "GET",
-        });
-        if (result?.statusCode === 200) {
-          setPositionOptions(result?.data || []);
-        } else {
-          toast.error(result?.message || "Failed to fetch positions");
-        }
-      } catch (err) {
-        toast.error("Network error fetching positions");
-      }
-    };
-    fetchOptions();
-  }, []);
+  const [positionOptions, setPositionOptions] = useState(fetchOptionsData);
 
   const handlePositionChange = async (e) => {
     const selectedName = e.target.value;
@@ -47,10 +27,7 @@ const AddPosition = (props) => {
     if (!selected?._id) return;
     setSelectedPositionId(selected._id);
     try {
-      const result = await apiRequest({
-        url: `position/postionRecord/${selected._id}`,
-        method: "GET",
-      });
+      const result = await getPositionChangeData(`position/postionRecord/${selected._id}`);
       if (result?.statusCode === 200) {
         setSelectedData(result?.data || {});
       } else {
@@ -74,16 +51,22 @@ const AddPosition = (props) => {
     )}&body=${encodeURIComponent(selectedData?.[0]?.emailBody)}`;
     window.open(gmailURL, "_blank");
 
+    const payload = {
+      emailApplied: email,
+      positionApplied: position,
+      dateAndTime: new Date().toISOString(),
+    };
     try {
-      const result = await apiRequest({
-        url: "apply/position-applied",
-        method: "POST",
-        body: {
-          emailApplied: email,
-          positionApplied: position,
-          dateAndTime: new Date().toISOString(),
-        }
-      });
+      const result = await positionApplied('apply/position-applied', payload)
+      // const result = await apiRequest({
+      //   url: "apply/position-applied",
+      //   method: "POST",
+      //   body: {
+      //     emailApplied: email,
+      //     positionApplied: position,
+      //     dateAndTime: new Date().toISOString(),
+      //   }
+      // });
 
       if (result?.statusCode === 201) {
         toast.success(result?.message || "Successfully sent email");
@@ -97,29 +80,18 @@ const AddPosition = (props) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    // removeAuthToken();
+    removeAuthToken();
     toast.success("Logged out successfully");
     router.push("/");
   };
 
   useEffect(() => {
-    const fetchAppliedData = async () => {
-      try {
-        const result = await apiRequest({
-          url: "apply/get-position-applied",
-          method: "GET",
-        });
-        if (result?.statusCode === 200) {
-          setHistory(result?.data || []);
-        } else {
-          toast.error(result?.message || "Failed to fetch history");
-        }
-      } catch (err) {
-        toast.error("Error loading history");
-      }
-    };
-    fetchAppliedData();
-  }, []);
+    setPositionOptions(fetchOptionsData);
+  }, [fetchOptionsData]);
+
+  useEffect(() => {
+    setHistory(fetchAppliedDatas);
+  }, [fetchAppliedDatas]);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-100 via-blue-50 to-gray-200 px-4 py-10">

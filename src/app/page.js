@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { setAuthToken } from "@/utils/CookieData";
 
 const HRBotApp = () => {
   const router = useRouter();
@@ -65,7 +66,7 @@ const HRBotApp = () => {
       if (isLogin) {
         if (data.token) {
           localStorage.setItem("token", data.token);
-          // setAuthToken(data.token);
+          setAuthToken(data.token);
           router.push("/position");
         }
       } else {
