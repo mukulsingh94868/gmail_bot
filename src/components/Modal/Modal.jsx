@@ -1,7 +1,6 @@
 "use client";
-import { positionApply } from "@/actions/addPositionActions";
-import { apiRequest } from "@/api/api";
-import React, { useState } from "react";
+import { handleGenerateMail, positionApply } from "@/actions/addPositionActions";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 const AddPositionModal = ({ setShowModal }) => {
@@ -11,16 +10,12 @@ const AddPositionModal = ({ setShowModal }) => {
     emailBody: "",
   });
 
+  const [emailPrompt, setEmailPrompt] = useState("");
+
   const handleAddPosition = async (e) => {
     e.preventDefault();
     try {
       const result = await positionApply('position/positionApply', positionApplied);
-      // const result = await apiRequest({
-      //   url: "position/positionApply",
-      //   method: "POST",
-      //   body: positionApplied,
-      // });
-
       if (result?.statusCode === 200) {
         toast.success(result?.message || "Position added successfully");
         setShowModal(false);
@@ -40,6 +35,37 @@ const AddPositionModal = ({ setShowModal }) => {
     }));
   };
 
+  const handleGenerate = async () => {
+    if (!emailPrompt.trim()) {
+      toast.error("Please enter a prompt before generating the email.");
+      return;
+    }
+
+    const payload = {
+      position: emailPrompt,
+    };
+
+    try {
+      const result = await handleGenerateMail('position/generateMail', payload);
+      if (result?.statusCode === 200) {
+        toast.success(result?.message || "Email is generated successfully");
+
+        setPositionApplied((prev) => ({
+          ...prev,
+          emailSubject: result?.data?.subject || "",
+          emailBody: result?.data?.body || "",
+        }));
+      } else {
+        toast.error(result?.message || "Failed to generate email content");
+      }
+    } catch (error) {
+      console.log('error', error);
+      toast.error("Error generating email: " + error.message);
+    }
+  };
+
+
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-200 bg-opacity-90 p-4 sm:p-6">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md sm:max-w-lg md:max-w-xl p-6 sm:p-10 border border-blue-300 transition-all duration-300 ease-in-out">
@@ -57,6 +83,17 @@ const AddPositionModal = ({ setShowModal }) => {
             className="p-3 sm:p-4 rounded-lg border border-blue-300 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-400/50 bg-white shadow-sm placeholder:text-gray-400"
             required
           />
+
+          <div className="flex justify-between gap-x-4">
+            <textarea
+              name="emailPrompt"
+              placeholder="Email Prompt..."
+              onChange={(e) => setEmailPrompt(e.target.value)}
+              className="p-3 sm:p-4 rounded-lg border border-blue-300 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-400/50 bg-white shadow-sm placeholder:text-gray-400 min-h-[100px] sm:min-h-[120px] resize-none w-full"
+              required
+            />
+            <button type="button" className="underline" onClick={handleGenerate}>Generate</button>
+          </div>
 
           <input
             type="text"

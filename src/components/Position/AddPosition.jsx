@@ -57,17 +57,7 @@ const AddPosition = (props) => {
       dateAndTime: new Date().toISOString(),
     };
     try {
-      const result = await positionApplied('apply/position-applied', payload)
-      // const result = await apiRequest({
-      //   url: "apply/position-applied",
-      //   method: "POST",
-      //   body: {
-      //     emailApplied: email,
-      //     positionApplied: position,
-      //     dateAndTime: new Date().toISOString(),
-      //   }
-      // });
-
+      const result = await positionApplied('apply/position-applied', payload);
       if (result?.statusCode === 201) {
         toast.success(result?.message || "Successfully sent email");
       } else {
@@ -96,7 +86,6 @@ const AddPosition = (props) => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-100 via-blue-50 to-gray-200 px-4 py-10">
       <div className="max-w-6xl mx-auto space-y-10">
-        {/* Header */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <h1 className="text-4xl font-bold text-slate-800 flex items-center gap-2">
             📧 <span>RecruitLoop</span>
@@ -123,7 +112,6 @@ const AddPosition = (props) => {
           </div>
         </div>
 
-        {/* Form Card */}
         <div className="max-w-3xl mx-auto bg-white border border-gray-200 shadow-md rounded-2xl px-6 py-8 space-y-6">
           <select
             value={position}
@@ -131,7 +119,7 @@ const AddPosition = (props) => {
             className="w-full p-3 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             <option value="">Select Position</option>
-            {positionOptions.map((pos) => (
+            {positionOptions?.map((pos) => (
               <option key={pos._id} value={pos.name}>
                 {pos.name}
               </option>
@@ -154,7 +142,6 @@ const AddPosition = (props) => {
           </button>
         </div>
 
-        {/* Activity Section */}
         {history?.length > 0 && (
           <div className="max-w-3xl mx-auto mt-12">
             <h3 className="text-2xl font-semibold text-slate-800 mb-5 flex items-center gap-2">
@@ -189,7 +176,6 @@ const AddPosition = (props) => {
         )}
       </div>
 
-      {/* Modal */}
       {showModal && (
         <AddPositionModal showModal={showModal} setShowModal={setShowModal} />
       )}
