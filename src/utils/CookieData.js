@@ -1,15 +1,14 @@
-// utils/CookieData.ts
 'use server';
 
 import { cookies } from 'next/headers';
 
 export const getAuthToken = async () => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   return cookieStore.get('token')?.value;
 };
 
 export const setAuthToken = async (token) => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   cookieStore.set('token', token, {
     httpOnly: true,
     secure: true,
@@ -20,6 +19,6 @@ export const setAuthToken = async (token) => {
 };
 
 export const removeAuthToken = async () => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   cookieStore.delete('token');
 };
