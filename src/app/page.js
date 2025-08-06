@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { setAuthToken } from "@/utils/CookieData";
+import { registerLoginAction } from "@/actions/loginActions";
 
 const HRBotApp = () => {
   const router = useRouter();
@@ -29,44 +30,51 @@ const HRBotApp = () => {
     e.preventDefault();
 
     const endpoint = isLogin
-      ? `${process.env.NEXT_PUBLIC_APP}/api/auth/login`
-      : `${process.env.NEXT_PUBLIC_APP}/api/auth/register`;
+      ? `auth/login`
+      : `auth/register`;
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
       return toast.error("Passwords do not match");
     }
 
     try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          isLogin
-            ? {
-              email: formData.email,
-              password: formData.password,
-            }
-            : {
-              name: formData.name,
-              email: formData.email,
-              password: formData.password,
-            }
-        ),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.message || "Something went wrong");
-        return;
+      const payload = isLogin ? {
+        email: formData.email,
+        password: formData.password,
+      } : {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
       }
+      const res = await registerLoginAction(endpoint, payload);
+      // const res = await fetch(endpoint, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(
+      //     isLogin
+      //       ? {
+      //         email: formData.email,
+      //         password: formData.password,
+      //       }
+      //       : {
+      //         name: formData.name,
+      //         email: formData.email,
+      //         password: formData.password,
+      //       }
+      //   ),
+      // });
+      // const data = await res.json();
 
-      toast.success(data.message || (isLogin ? "Login successful" : "Registration successful"));
+      // if (!res.ok) {
+      //   toast.error(data.message || "Something went wrong");
+      //   return;
+      // }
+
+      toast.success(res?.message || (isLogin ? "Login successful" : "Registration successful"));
 
       if (isLogin) {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-          setAuthToken(data.token);
+        if (res?.token) {
+          setAuthToken(res?.token);
           router.push("/position");
         }
       } else {

@@ -46,12 +46,18 @@ const AddPosition = (props) => {
       return;
     }
 
-    const gmailURL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
-      email
-    )}&su=${encodeURIComponent(
-      selectedData?.[0]?.emailSubject
-    )}&body=${encodeURIComponent(selectedData?.[0]?.emailBody)}`;
-    window.open(gmailURL, "_blank");
+    const isMobile = typeof window !== 'undefined' && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    const subject = selectedData?.[0]?.emailSubject || '';
+    const body = selectedData?.[0]?.emailBody || '';
+
+    if (isMobile) {
+      const mailto = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href = mailto;
+    } else {
+      const gmailURL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.open(gmailURL, "_blank");
+    }
 
     const payload = {
       emailApplied: email,
