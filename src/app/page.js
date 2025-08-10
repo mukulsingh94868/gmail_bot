@@ -5,11 +5,15 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { setAuthToken } from "@/utils/CookieData";
 import { registerLoginAction } from "@/actions/loginActions";
+import { Eye, EyeOff } from "lucide-react";
 
 const HRBotApp = () => {
   const router = useRouter();
 
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,48 +33,27 @@ const HRBotApp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const endpoint = isLogin
-      ? `auth/login`
-      : `auth/register`;
+    const endpoint = isLogin ? `auth/login` : `auth/register`;
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
       return toast.error("Passwords do not match");
     }
 
     try {
-      const payload = isLogin ? {
-        email: formData.email,
-        password: formData.password,
-      } : {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      }
+      const payload = isLogin
+        ? { email: formData.email, password: formData.password }
+        : {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          };
+
       const res = await registerLoginAction(endpoint, payload);
-      // const res = await fetch(endpoint, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(
-      //     isLogin
-      //       ? {
-      //         email: formData.email,
-      //         password: formData.password,
-      //       }
-      //       : {
-      //         name: formData.name,
-      //         email: formData.email,
-      //         password: formData.password,
-      //       }
-      //   ),
-      // });
-      // const data = await res.json();
 
-      // if (!res.ok) {
-      //   toast.error(data.message || "Something went wrong");
-      //   return;
-      // }
-
-      toast.success(res?.message || (isLogin ? "Login successful" : "Registration successful"));
+      toast.success(
+        res?.message ||
+          (isLogin ? "Login successful" : "Registration successful")
+      );
 
       if (isLogin) {
         if (res?.token) {
@@ -92,7 +75,9 @@ const HRBotApp = () => {
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-extrabold text-blue-700">RecruitLoop</h1>
-          <p className="text-sm text-gray-500 mt-1">Automate your recruiter outreach with smart templates</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Automate your recruiter outreach with smart templates
+          </p>
         </div>
 
         <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">
@@ -111,6 +96,7 @@ const HRBotApp = () => {
               required
             />
           )}
+
           <input
             type="email"
             name="email"
@@ -120,25 +106,45 @@ const HRBotApp = () => {
             onChange={handleChange}
             required
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            className="w-full border px-4 py-2 rounded-lg text-gray-800"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-          {!isLogin && (
+
+          <div className="relative">
             <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              className="w-full border px-4 py-2 rounded-lg text-gray-800"
-              value={formData.confirmPassword}
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              className="w-full border px-4 py-2 rounded-lg text-gray-800 pr-10"
+              value={formData.password}
               onChange={handleChange}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          {!isLogin && (
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                className="w-full border px-4 py-2 rounded-lg text-gray-800 pr-10"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           )}
 
           <button

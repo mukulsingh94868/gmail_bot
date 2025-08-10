@@ -67,6 +67,7 @@ export const positionApplied = async (urlData, payload) => {
             },
         });
         const res = result;
+        revalidatePath('/position');
         return res;
     } catch (error) {
         console.error('Error', error);
