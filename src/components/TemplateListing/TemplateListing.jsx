@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { apiRequest } from "@/api/api";
-import { EditPositionModal } from "../Modal/EditPositionModel";
-import Faq from "../Faq";
 import { deleteUserPositions, getUserPositionsById } from "@/actions/templateListingActons";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import Faq from "../Faq";
+import { EditPositionModal } from "../Modal/EditPositionModel";
 
 const TemplatesListing = (props) => {
     const { templateData } = props;
@@ -14,28 +13,6 @@ const TemplatesListing = (props) => {
     const [templates, setTemplates] = useState(templateData);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentEditData, setCurrentEditData] = useState(null);
-
-    // Fetch all templates
-    // const fetchTemplates = async () => {
-    //     try {
-    //         const result = await apiRequest({
-    //             url: "position/getUserPositions",
-    //             method: "GET",
-    //         });
-
-    //         if (result?.statusCode === 200) {
-    //             setTemplates(result?.data || []);
-    //         } else {
-    //             toast.error(result?.message || "Failed to fetch templates");
-    //         }
-    //     } catch (error) {
-    //         toast.error("Network error fetching templates");
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     fetchTemplates();
-    // }, []);
 
     const handleEdit = async (id) => {
         try {
@@ -148,7 +125,6 @@ const TemplatesListing = (props) => {
                     <EditPositionModal
                         setShowModal={setShowEditModal}
                         editData={currentEditData}
-                    // refreshList={fetchTemplates}
                     />
                 )}
             </div>

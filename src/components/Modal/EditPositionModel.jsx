@@ -30,12 +30,6 @@ export const EditPositionModal = ({ setShowModal, editData }) => {
     e.preventDefault();
     try {
       const result = await editUserPositions(`position/editUserPositions/${editData._id}`, formData);
-      // const result = await apiRequest({
-      //   url: `position/editUserPositions/${editData._id}`,
-      //   method: "PUT",
-      //   body: formData,
-      // });
-
       if (result?.statusCode === 200) {
         toast.success(result?.message || "Position updated");
         setShowModal(false);

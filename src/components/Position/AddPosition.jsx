@@ -141,9 +141,6 @@ const AddPosition = (props) => {
       }
     })();
   }, []);
-
-  console.log("fetchOptionsData", fetchOptionsData);
-
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-2 py-0 flex flex-col">
       <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm sticky top-0 z-30">
@@ -213,13 +210,11 @@ const AddPosition = (props) => {
 
         {mobileMenuOpen && (
           <>
-            {/* Backdrop */}
             <div
               className="fixed inset-0 bg-black/20 z-40 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
               aria-label="Close menu"
             />
-            {/* Floating card menu */}
             <div className="fixed top-5 right-4 z-50 md:hidden animate-fade-in">
               <div className="rounded-2xl shadow-2xl border border-slate-200 bg-white/95 min-w-[210px] max-w-[90vw] flex flex-col py-2 px-2">
                 <button
@@ -260,7 +255,6 @@ const AddPosition = (props) => {
                 </nav>
               </div>
             </div>
-            {/* Fade-in animation */}
             <style jsx>{`
               @keyframes fade-in {
                 from {

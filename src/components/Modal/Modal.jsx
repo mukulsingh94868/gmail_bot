@@ -18,7 +18,6 @@ const AddPositionModal = ({ setShowModal }) => {
 
   const handleAddPosition = async (e) => {
     e.preventDefault();
-    // Prevent submission while a generation request is in-flight
     if (isGenerating) {
       toast.error("Please wait until generation is complete.");
       return;
@@ -99,7 +98,6 @@ const AddPositionModal = ({ setShowModal }) => {
             required
           />
 
-          {/* Prompt + Generate (prompt is NOT required for the form submit) */}
           <div className="flex items-start gap-4">
             <textarea
               name="emailPrompt"
@@ -107,7 +105,6 @@ const AddPositionModal = ({ setShowModal }) => {
               onChange={(e) => setEmailPrompt(e.target.value)}
               className="flex-1 p-3 sm:p-4 rounded-lg border border-blue-300 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-400/50 bg-white shadow-sm placeholder:text-gray-400 min-h-[100px] sm:min-h-[120px] resize-none"
               value={emailPrompt}
-              // NOTE: no 'required' here — manual filling of subject/body is supported
               disabled={isGenerating}
             />
 
