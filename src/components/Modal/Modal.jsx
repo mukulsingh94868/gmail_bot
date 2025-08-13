@@ -15,14 +15,15 @@ const AddPositionModal = ({ setShowModal }) => {
 
   const [emailPrompt, setEmailPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
 
   const handleAddPosition = async (e) => {
     e.preventDefault();
-    if (isGenerating) {
+    if (isGenerating || isRegistering) {
       toast.error("Please wait until generation is complete.");
       return;
     }
-
+    setIsRegistering(true);
     try {
       const result = await positionApply(
         "position/positionApply",
@@ -30,12 +31,16 @@ const AddPositionModal = ({ setShowModal }) => {
       );
       if (result?.statusCode === 200) {
         toast.success(result?.message || "Position added successfully");
-        setShowModal(false);
+        setTimeout(() => {
+          setShowModal(false);
+        }, 1000);
       } else {
         toast.error(result?.message || "Failed to add position");
       }
     } catch (error) {
       toast.error("Failed to add position: " + (error?.message || error));
+    } finally {
+      setIsRegistering(false);
     }
   };
 
@@ -79,6 +84,16 @@ const AddPositionModal = ({ setShowModal }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-200 bg-opacity-90 p-4 sm:p-6">
+      {/* Loader overlay */}
+      {isRegistering && (
+        <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center z-50">
+          <svg className="animate-spin h-12 w-12 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+          <span className="text-blue-700 font-semibold text-lg">Registering...</span>
+        </div>
+      )}
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md sm:max-w-lg md:max-w-xl p-6 sm:p-10 border border-blue-300 transition-all duration-300 ease-in-out">
         <h2 className="text-xl sm:text-2xl font-extrabold text-blue-800 mb-6 text-center drop-shadow">
           🚀 Add New Position
@@ -114,11 +129,10 @@ const AddPositionModal = ({ setShowModal }) => {
                 onClick={handleGenerate}
                 disabled={isGenerating}
                 aria-busy={isGenerating}
-                className={`px-4 py-2 rounded-lg font-medium text-white shadow-sm transition ${
-                  isGenerating
+                className={`px-4 py-2 rounded-lg font-medium text-white shadow-sm transition ${isGenerating
                     ? "bg-blue-500 cursor-not-allowed opacity-90"
                     : "bg-blue-600 hover:bg-blue-700"
-                }`}
+                  }`}
               >
                 {isGenerating ? (
                   <span className="inline-flex items-center gap-2">
@@ -181,9 +195,8 @@ const AddPositionModal = ({ setShowModal }) => {
             </button>
             <button
               type="submit"
-              className={`w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 shadow transition ${
-                isGenerating ? "opacity-80 cursor-not-allowed" : ""
-              }`}
+              className={`w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 shadow transition ${isGenerating ? "opacity-80 cursor-not-allowed" : ""
+                }`}
               disabled={isGenerating}
             >
               Add Position
