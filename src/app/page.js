@@ -19,15 +19,32 @@ const HRBotApp = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    role: "candidate",
   });
 
   const handleToggle = () => {
     setIsLogin(!isLogin);
-    setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "candidate",
+    });
   };
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value, type, checked } = e.target;
+
+    if (type === "checkbox" && name === "role") {
+      // checkbox → recruiter or candidate
+      setFormData((prev) => ({
+        ...prev,
+        role: checked ? "recruiter" : "candidate",
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -56,16 +73,19 @@ const HRBotApp = () => {
 
     try {
       const payload = isLogin
-        ? { email: formData.email, password: formData.password }
+        ? {
+            email: formData.email,
+            password: formData.password,
+            role: formData.role,
+          }
         : {
             name: formData.name,
             email: formData.email,
             password: formData.password,
+            role: formData.role,
           };
-
       const res = await registerLoginAction(endpoint, payload);
 
-      // ✅ handle API error responses
       if (res?.error) {
         if (isLogin && res.error === "User not found") {
           return toast.error("Please Register First");
@@ -79,19 +99,32 @@ const HRBotApp = () => {
         return toast.error(res.error);
       }
 
-      // ✅ handle success cases
       if (isLogin) {
         if (res?.token) {
-          toast.success("Login successful");
-          setAuthToken(res.token);
-          router.push("/position");
+          toast.success(`Login successful as ${formData?.role}`);
+          setAuthToken(res.token, "token");
+          setAuthToken(res?.data?.role, "role");
+
+          if (res?.data?.role === "recruiter") {
+            router.push("/recruiter-dashboard");
+          } else {
+            router.push("/position");
+          }
         } else {
           toast.error("Something went wrong. Try again.");
         }
       } else {
-        toast.success("Registration successful. Please login now.");
-        setIsLogin(true); // switch to login form
-        setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+        toast.success(
+          `Registration successful as ${formData.role}. Please login now.`
+        );
+        setIsLogin(true);
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          role: "candidate",
+        });
       }
     } catch (err) {
       console.error("Error:", err);
@@ -173,6 +206,23 @@ const HRBotApp = () => {
               >
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
+            </div>
+          )}
+
+          {/* ✅ Role checkbox */}
+          {!isLogin && (
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                name="role"
+                id="role"
+                checked={formData.role === "recruiter"}
+                onChange={handleChange}
+                className="w-4 h-4"
+              />
+              <label htmlFor="role" className="text-gray-700">
+                {!isLogin && "Register as Recruiter"}
+              </label>
             </div>
           )}
 

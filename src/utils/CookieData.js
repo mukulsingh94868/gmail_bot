@@ -8,9 +8,9 @@ export const getAuthToken = async () => {
   return token;
 };
 
-export const setAuthToken = async (token) => {
+export const setAuthToken = async (token, key) => {
   const cookieStore = await cookies();
-  cookieStore.set('token', token, {
+  cookieStore.set(key, token, {
     httpOnly: true,
     secure: true,
     sameSite: 'lax',
@@ -19,7 +19,7 @@ export const setAuthToken = async (token) => {
   });
 };
 
-export const removeAuthToken = async () => {
+export const removeAuthToken = async (key) => {
   const cookieStore = await cookies();
-  cookieStore.delete('token');
+  cookieStore.delete(key);
 };

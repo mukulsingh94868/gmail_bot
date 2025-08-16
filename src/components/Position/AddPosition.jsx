@@ -106,7 +106,8 @@ const AddPosition = (props) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    removeAuthToken();
+    removeAuthToken('token');
+    removeAuthToken('role');
     toast.success("Logged out successfully");
     router.push("/");
   };
