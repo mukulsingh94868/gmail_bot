@@ -18,19 +18,33 @@ export const apiRequest = async ({
     options.body = JSON.stringify(body);
   }
 
-  const dataurl = `${process.env.NEXT_PUBLIC_APP}/api/${url}`;
+  const dataUrl = `${process.env.NEXT_PUBLIC_APP}/api/${url}`;
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP}/api/${url}`, options);
-    const data = await response.json();
+    const response = await fetch(dataUrl, options);
 
-    if (!response.ok) {
-      throw new Error(data?.message || "API request failed");
+    // Try to parse JSON safely
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      data = { message: "Invalid JSON response" };
     }
 
-    return data;
+    if (!response.ok) {
+      // Always throw a structured error
+      throw { status: response.status, data };
+    }
+
+    return data; // ✅ success
   } catch (error) {
-    console.error("API Error:", error.message);
-    throw error;
+    console.error("API Error:", error);
+
+    // Normalize error so caller always gets { error: "..." }
+    if (error?.data) {
+      return { error: error.data?.message || "API request failed" };
+    }
+
+    return { error: error?.data?.message || "Network error" };
   }
 };

@@ -33,11 +33,26 @@ const HRBotApp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const endpoint = isLogin ? `auth/login` : `auth/register`;
-
-    if (!isLogin && formData.password !== formData.confirmPassword) {
-      return toast.error("Passwords do not match");
+    // ✅ Frontend validation before API call
+    if (isLogin) {
+      if (!formData.email || !formData.password) {
+        return toast.error("Email and password are required");
+      }
+    } else {
+      if (
+        !formData.name ||
+        !formData.email ||
+        !formData.password ||
+        !formData.confirmPassword
+      ) {
+        return toast.error("All fields are required");
+      }
+      if (formData.password !== formData.confirmPassword) {
+        return toast.error("Passwords do not match");
+      }
     }
+
+    const endpoint = isLogin ? `auth/login` : `auth/register`;
 
     try {
       const payload = isLogin
@@ -50,18 +65,32 @@ const HRBotApp = () => {
 
       const res = await registerLoginAction(endpoint, payload);
 
-      toast.success(
-        res?.message ||
-          (isLogin ? "Login successful" : "Registration successful")
-      );
+      // ✅ handle API error responses
+      if (res?.error) {
+        if (isLogin && res.error === "User not found") {
+          return toast.error("Please Register First");
+        }
+        if (isLogin && res.error === "Invalid credentials") {
+          return toast.error("Invalid Email or Password");
+        }
+        if (!isLogin && res.error === "User already exists") {
+          return toast.error("User already registered, please login");
+        }
+        return toast.error(res.error);
+      }
 
+      // ✅ handle success cases
       if (isLogin) {
         if (res?.token) {
-          setAuthToken(res?.token);
+          toast.success("Login successful");
+          setAuthToken(res.token);
           router.push("/position");
+        } else {
+          toast.error("Something went wrong. Try again.");
         }
       } else {
-        setIsLogin(true);
+        toast.success("Registration successful. Please login now.");
+        setIsLogin(true); // switch to login form
         setFormData({ name: "", email: "", password: "", confirmPassword: "" });
       }
     } catch (err) {
