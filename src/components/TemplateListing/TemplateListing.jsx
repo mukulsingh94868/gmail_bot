@@ -1,6 +1,9 @@
 "use client";
 
-import { deleteUserPositions, getUserPositionsById } from "@/actions/templateListingActons";
+import {
+  deleteUserPositions,
+  getUserPositionsById,
+} from "@/actions/templateListingActons";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -8,128 +11,152 @@ import Faq from "../Faq";
 import { EditPositionModal } from "../Modal/EditPositionModel";
 
 const TemplatesListing = (props) => {
-    const { templateData } = props;
-    const router = useRouter();
-    const [templates, setTemplates] = useState(templateData);
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [currentEditData, setCurrentEditData] = useState(null);
+  const { templateData } = props;
+  const router = useRouter();
+  const [templates, setTemplates] = useState(templateData);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentEditData, setCurrentEditData] = useState(null);
 
-    const handleEdit = async (id) => {
-        try {
-            const result = await getUserPositionsById(`position/getUserPositionsById/${id}`)
-            if (result?.statusCode === 200) {
-                setCurrentEditData(result?.data);
-                setShowEditModal(true);
-            } else {
-                toast.error(result?.message || "Failed to fetch position details");
-            }
-        } catch (error) {
-            toast.error("Error fetching edit data: " + error.message);
-        }
-    };
+  const handleEdit = async (id) => {
+    try {
+      const result = await getUserPositionsById(
+        `position/getUserPositionsById/${id}`
+      );
+      if (result?.statusCode === 200) {
+        setCurrentEditData(result?.data);
+        setShowEditModal(true);
+      } else {
+        toast.error(result?.message || "Failed to fetch position details");
+      }
+    } catch (error) {
+      toast.error("Error fetching edit data: " + error.message);
+    }
+  };
 
-    const handleDelete = async (id) => {
-        const confirm = window.confirm("Are you sure you want to delete this position?");
-        if (!confirm) return;
-
-        try {
-            const result = await deleteUserPositions(`position/deleteUserPositions/${id}`);
-            if (result?.statusCode === 200) {
-                toast.success(result?.message || "Position deleted successfully");
-            } else {
-                toast.error(result?.message || "Failed to delete position");
-            }
-        } catch (error) {
-            console.error("Delete error:", error);
-            toast.error("An error occurred while deleting");
-        }
-    };
-
-    useEffect(() => {
-        setTemplates(templateData);
-    }, [templateData]);
-    return (
-        <>
-            <div className="min-h-screen bg-gray-50 py-8 px-4">
-                <div className="max-w-6xl mx-auto">
-                    <button className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer" onClick={() => router.back()}>
-                        <span className="text-[25px] mb-1">←</span>
-                        <span className="text-[15px]">Back</span>
-                    </button>
-                </div>
-                <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-8">
-                    <h2 className="text-3xl font-bold text-blue-800 mb-6 flex items-center gap-2">
-                        📄 <span>Templates Listing</span>
-                    </h2>
-
-                    {templates?.length === 0 ? (
-                        <p className="text-gray-500">No templates found.</p>
-                    ) : (
-                        <div className="overflow-x-auto rounded-lg border border-blue-100">
-                            <table className="w-full min-w-[600px] table-auto text-sm">
-                                <thead className="bg-blue-100 text-blue-800">
-                                    <tr>
-                                        <th className="p-4 text-left">Position</th>
-                                        <th className="p-4 text-left">Email Subject</th>
-                                        <th className="p-4 text-left">Created At</th>
-                                        <th className="p-4 text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {templates?.map((template) => (
-                                        <tr
-                                            key={template?._id}
-                                            className="border-t hover:bg-blue-50 transition"
-                                        >
-                                            <td className="p-4">{template?.position}</td>
-                                            <td className="p-4">{template?.emailSubject}</td>
-                                            <td className="p-4">
-                                                {new Date(template?.createdAt)?.toLocaleString("en-GB", {
-                                                    day: "2-digit",
-                                                    month: "2-digit",
-                                                    year: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    hour12: true,
-                                                })}
-                                            </td>
-                                            <td className="p-4 text-center">
-                                                <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2">
-                                                    <button
-                                                        onClick={() => handleEdit(template?._id)}
-                                                        className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md w-full sm:w-auto"
-                                                    >
-                                                        ✏️
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(template?._id)}
-                                                        className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md w-full sm:w-auto"
-                                                    >
-                                                        🗑️
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-
-                <div className="max-w-6xl mx-auto mt-10">
-                    <Faq />
-                </div>
-
-                {showEditModal && currentEditData && (
-                    <EditPositionModal
-                        setShowModal={setShowEditModal}
-                        editData={currentEditData}
-                    />
-                )}
-            </div>
-        </>
+  const handleDelete = async (id) => {
+    const confirm = window.confirm(
+      "Are you sure you want to delete this position?"
     );
+    if (!confirm) return;
+
+    try {
+      const result = await deleteUserPositions(
+        `position/deleteUserPositions/${id}`
+      );
+      if (result?.statusCode === 200) {
+        toast.success(result?.message || "Position deleted successfully");
+      } else {
+        toast.error(result?.message || "Failed to delete position");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast.error("An error occurred while deleting");
+    }
+  };
+
+  useEffect(() => {
+    setTemplates(templateData);
+  }, [templateData]);
+  return (
+    <>
+      <div className="min-h-screen bg-gray-50 py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+          <button
+            className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer"
+            onClick={() => router.back()}
+          >
+            <span className="text-[25px] mb-1">←</span>
+            <span className="text-[15px]">Back</span>
+          </button>
+        </div>
+        <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+          <h2 className="text-3xl font-bold text-blue-800 mb-6 flex items-center gap-2">
+            📄 <span>Templates Listing</span>
+          </h2>
+
+          {templates?.length === 0 ? (
+            <p className="text-gray-500">No templates found.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border border-blue-100">
+              <table className="w-full min-w-[600px] table-auto text-sm">
+                <thead className="bg-blue-100 text-blue-800">
+                  <tr>
+                    <th className="p-4 text-left">Position</th>
+                    <th className="p-4 text-left">Email Subject</th>
+                    <th className="p-4 text-left">Created At</th>
+                    <th className="p-4 text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {templates?.map((template) => (
+                    <tr
+                      key={template?._id}
+                      className="border-t hover:bg-blue-50 transition"
+                    >
+                      <td className="p-4">{template?.position}</td>
+                      <td className="p-4">{template?.emailSubject}</td>
+                      <td className="p-4">
+                        {new Date(template?.createdAt)?.toLocaleString(
+                          "en-GB",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          }
+                        )}
+                      </td>
+                      <td className="p-4 text-center">
+                        <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2">
+                          <button
+                            onClick={() => handleEdit(template?._id)}
+                            className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md w-full sm:w-auto"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            onClick={() => handleDelete(template?._id)}
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md w-full sm:w-auto"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="max-w-6xl mx-auto mt-10">
+          <Faq />
+        </div>
+
+        {showEditModal && currentEditData && (
+          <EditPositionModal
+            setShowModal={setShowEditModal}
+            editData={currentEditData}
+          />
+        )}
+      </div>
+
+      <footer className="w-full bg-white border-t border-slate-200 py-4 mt-auto text-center shadow-sm">
+        <span className="text-slate-600 text-sm">
+          Developed by Mukul Singh &mdash;{" "}
+          <a
+            href="mailto:your@email.com"
+            className="text-blue-600 hover:underline"
+          >
+            mukulsingh94868@email.com
+          </a>
+        </span>
+      </footer>
+    </>
+  );
 };
 
 export default TemplatesListing;

@@ -325,8 +325,7 @@ const AddPosition = (props) => {
             </button>
           </div>
         )}
-
-        {history?.length > 0 && (
+        {/* {history?.length > 0 && (
           <div className="w-full max-w-2xl mt-14">
             <h3 className="text-xl font-semibold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-200 pb-2">
               <span className="text-2xl">📜</span> Recent Activity
@@ -357,8 +356,63 @@ const AddPosition = (props) => {
               ))}
             </ul>
           </div>
+        )} */}
+
+        {history?.length > 0 && (
+          <div className="w-full max-w-2xl mt-14">
+            <h3 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2 border-b border-slate-200 pb-3">
+              <span className="text-2xl">📜</span> Recent Activity
+            </h3>
+            <ul className="space-y-4">
+              {history?.map((item, idx) => (
+                <li
+                  key={idx}
+                  className="bg-gradient-to-r from-white via-slate-50 to-blue-50 shadow-lg rounded-xl p-6 border border-slate-200 hover:shadow-xl transition flex flex-col gap-2"
+                >
+                  <div className="flex items-center gap-3 mb-2">
+                    <Mail className="text-blue-600" size={20} />
+                    <span className="text-base font-medium text-slate-700">
+                      {item.emailApplied}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <FileText className="text-indigo-600" size={18} />
+                    <span className="text-base text-slate-700">
+                      <strong>Position:</strong>{" "}
+                      <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md font-semibold">
+                        {item?.positionApplied}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-xs text-slate-400">
+                      {new Date(item?.dateAndTime).toLocaleString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </main>
+      <footer className="w-full bg-white border-t border-slate-200 py-4 mt-auto text-center shadow-sm">
+        <span className="text-slate-600 text-sm">
+          Developed by Mukul Singh &mdash;{" "}
+          <a
+            href="mailto:your@email.com"
+            className="text-blue-600 hover:underline"
+          >
+            mukulsingh94868@email.com
+          </a>
+        </span>
+      </footer>
 
       {showModal && (
         <AddPositionModal showModal={showModal} setShowModal={setShowModal} />
