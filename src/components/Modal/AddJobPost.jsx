@@ -23,7 +23,6 @@ const AddJobPost = ({ setShowJobModal }) => {
     e.preventDefault();
 
     try {
-      // ✅ Basic validation
       if (
         !formData.title ||
         !formData.description ||
@@ -38,7 +37,6 @@ const AddJobPost = ({ setShowJobModal }) => {
         return;
       }
 
-      // ✅ Prepare payload
       const payload = {
         ...formData,
         skillsRequired: formData.skillsRequired
@@ -47,8 +45,6 @@ const AddJobPost = ({ setShowJobModal }) => {
       };
 
       console.log("Payload:", payload);
-
-      // ✅ API call
       const result = await handleJobPost("jobpost/createJobPost", payload);
 
       if (result?.statusCode === 201) {
@@ -75,7 +71,6 @@ const AddJobPost = ({ setShowJobModal }) => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Grid Layout */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
               type="text"
@@ -149,7 +144,6 @@ const AddJobPost = ({ setShowJobModal }) => {
             className="border p-2 rounded-lg w-full min-h-[100px]"
           />
 
-          {/* Buttons */}
           <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 mt-4">
             <button
               type="button"
