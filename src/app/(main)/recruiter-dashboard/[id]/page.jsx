@@ -1,17 +1,19 @@
-"use client";
+import { getJobPostByRecruiterId } from "@/actions/addJobPostActions";
+import { fetchJobOptions } from "@/actions/addPositionActions";
+import JobDetailPageByRecruiter from "@/components/recruiterDashboard/JobDetailPageByRecruiter";
 
-import RecruiterHeader from "@/components/RecruiterHeader/RecruiterHeader";
-import React, { useState } from "react";
-
-const JobDetailPage = () => {
-  const [showJobModal, setShowJobModal] = useState(false);
+const JobDetailPage = async ({ searchParams, params }) => {
+  const JobDataById = await getJobPostByRecruiterId(
+    `jobpost/getJobPostById/${params.id}`
+  );
+  const fetchJobPostData = await fetchJobOptions(
+    "jobpost/getJobsPostByRecruiter"
+  );
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-2 py-0 flex flex-col">
-      <RecruiterHeader
-        showJobModal={showJobModal}
-        setShowJobModal={setShowJobModal}
-      />
-    </div>
+    <JobDetailPageByRecruiter
+      JobDataById={JobDataById?.data}
+      fetchJobPostData={fetchJobPostData?.data}
+    />
   );
 };
 
