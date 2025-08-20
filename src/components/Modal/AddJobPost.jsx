@@ -1,4 +1,5 @@
 import { handleJobPost } from "@/actions/addJobPostActions";
+import { EmploymentType, ExperienceLevel, WorkMode } from "@/constants/JobData";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -81,14 +82,19 @@ const AddJobPost = ({ setShowJobModal }) => {
               className="border p-2 rounded-lg w-full"
             />
 
-            <input
-              type="text"
+            <select
               name="employmentType"
-              placeholder="Employment Type"
               value={formData.employmentType}
               onChange={handleChange}
-              className="border p-2 rounded-lg w-full"
-            />
+              className="border p-2 rounded-lg w-full bg-white"
+            >
+              <option value="">Select Employment Type</option>
+              {EmploymentType?.map((type) => (
+                <option key={type} value={type?.value}>
+                  {type?.label}
+                </option>
+              ))}
+            </select>
 
             <input
               type="text"
@@ -99,23 +105,33 @@ const AddJobPost = ({ setShowJobModal }) => {
               className="border p-2 rounded-lg w-full"
             />
 
-            <input
-              type="text"
+            <select
               name="workMode"
-              placeholder="Work Mode (Remote/On-site)"
               value={formData.workMode}
               onChange={handleChange}
-              className="border p-2 rounded-lg w-full"
-            />
+              className="border p-2 rounded-lg w-full bg-white"
+            >
+              <option value="">Select Work Mode</option>
+              {WorkMode?.map((mode) => (
+                <option key={mode} value={mode?.value}>
+                  {mode?.label}
+                </option>
+              ))}
+            </select>
 
-            <input
-              type="text"
+            <select
               name="experienceLevel"
-              placeholder="Experience Level"
               value={formData.experienceLevel}
               onChange={handleChange}
-              className="border p-2 rounded-lg w-full"
-            />
+              className="border p-2 rounded-lg w-full bg-white"
+            >
+              <option value="">Select Experience Level</option>
+              {ExperienceLevel?.map((level) => (
+                <option key={level} value={level?.value}>
+                  {level?.label}
+                </option>
+              ))}
+            </select>
 
             <input
               type="text"

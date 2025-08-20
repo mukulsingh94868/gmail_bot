@@ -1,5 +1,8 @@
+"use server";
+
 import { apiRequest } from "@/api/api";
 import { getAuthToken } from "@/utils/CookieData";
+import { revalidatePath } from "next/cache";
 
 export const handleJobPost = async (urlData, payload) => {
   const token = await getAuthToken();
@@ -13,6 +16,7 @@ export const handleJobPost = async (urlData, payload) => {
       },
     });
     const res = result;
+    revalidatePath('/recruiter-dashboard');
     return res;
   } catch (error) {
     console.error("Error", error);

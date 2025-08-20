@@ -1,7 +1,7 @@
 "use client";
 
 import { getAuthToken, removeAuthToken } from "@/utils/CookieData";
-import { CircleUserRound, LogOut, Plus, User } from "lucide-react";
+import { CircleUserRound, FileText, LogOut, Plus, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
