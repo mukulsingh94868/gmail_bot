@@ -3,21 +3,27 @@
 import { FileText, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import CandidateHeader from "../CandidateHeader/CandidateHeader";
 
 const RecentMail = ({ fetchAppliedDatas }) => {
   const router = useRouter();
   const [history, setHistory] = useState(fetchAppliedDatas);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     setHistory(fetchAppliedDatas);
   }, [fetchAppliedDatas]);
   return (
     <>
+      {/* <CandidateHeader showModal={showModal} setShowModal={setShowModal} /> */}
       <div className="w-full flex justify-center px-2 sm:px-6 md:px-12 lg:px-0">
         {history?.length > 0 && (
           <div className="w-full max-w-4xl mt-10">
             <div className="mb-10">
-              <button className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer" onClick={() => router.back()}>
+              <button
+                className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer"
+                onClick={() => router.back()}
+              >
                 <span className="text-[25px] mb-1">←</span>
                 <span className="text-[15px]">Back</span>
               </button>
