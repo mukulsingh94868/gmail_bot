@@ -249,6 +249,15 @@ const AddPosition = (props) => {
                     <FileText size={15} /> Templates
                   </button>
                   <button
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-yellow-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
+                    onClick={() => {
+                      router.push("/recent-mails");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <Mail size={15} /> Recent Mails
+                  </button>
+                  <button
                     className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-rose-700 hover:bg-rose-50 focus:bg-rose-100 transition cursor-pointer"
                     onClick={() => {
                       handleLogout();
@@ -330,6 +339,10 @@ const AddPosition = (props) => {
             </button>
           </div>
         )}
+
+        {/* <div>
+          <JobSection />
+        </div> */}
       </main>
 
       {showModal && (
