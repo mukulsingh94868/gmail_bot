@@ -24,6 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import JobSection from "../JobSection/JobSection";
 
 const AddPosition = (props) => {
   const { fetchOptionsData, fetchAppliedDatas } = props;
@@ -340,9 +341,9 @@ const AddPosition = (props) => {
           </div>
         )}
 
-        {/* <div>
+        <div>
           <JobSection />
-        </div> */}
+        </div>
       </main>
 
       {showModal && (

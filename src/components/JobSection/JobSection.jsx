@@ -14,10 +14,10 @@ const JobSection = () => {
     setLoading(true);
     try {
       const data = await fetchAppliedData(
-        `jobpost/getAllJobsPost?page=${page}&limit=${pageLimit}`
+        `jd/getAllJds?page=${page}&limit=${pageLimit}`
       );
-      setJobs(data?.data || []);
-      setTotalPages(data?.totalPages || 1);
+      setJobs(data?.jobPosts || []);
+      setTotalPages(data?.pagination?.totalPages || 1);
     } catch (error) {
       console.error("Failed to fetch jobs", error);
     } finally {
@@ -40,6 +40,12 @@ const JobSection = () => {
     fetchJobs(currentPage, limit);
   }, [currentPage, limit]);
 
+  // helper to strip HTML tags for preview
+  const stripHtml = (html) => {
+    if (!html) return "";
+    return html.replace(/<[^>]+>/g, "");
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-6">
       <div className="flex justify-between items-center mb-6">
@@ -48,7 +54,6 @@ const JobSection = () => {
           <label htmlFor="limit" className="text-sm font-medium text-gray-700">
             Rows per page:
           </label>
-
           <select
             id="limit"
             value={limit}
@@ -66,68 +71,59 @@ const JobSection = () => {
       </div>
 
       <div className="relative min-h-[300px]">
-        {" "}
         {loading && (
           <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
             <p className="text-slate-500">Loading...</p>
           </div>
         )}
+
+        {/* Job Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {jobs?.map((job) => (
-            <div
-              key={job._id}
-              className="flex flex-col bg-white border border-slate-200 shadow-sm rounded-xl p-5 hover:shadow-md transition"
-            >
-              {/* Title & Description */}
-              <h3 className="text-lg font-semibold text-blue-700 mb-2">
-                {job.title}
-              </h3>
-              <p className="text-sm text-slate-600 mb-3 line-clamp-3">
-                {job.description}
-              </p>
+          {jobs?.map((job) => {
+            const preview = stripHtml(job.JD).slice(0, 200);
+            return (
+              <div
+                key={job._id}
+                className="flex flex-col bg-white border border-slate-200 shadow-sm rounded-xl p-5 hover:shadow-md transition"
+              >
+                {/* Job JD preview */}
+                <div className="text-slate-700 text-sm mb-3 line-clamp-4">
+                  {preview}...
+                </div>
 
-              {/* Details */}
-              <ul className="text-sm text-slate-700 space-y-1 mb-4">
-                <li>
-                  <strong>Location:</strong> {job.location}
-                </li>
-                <li>
-                  <strong>Work Mode:</strong> {job.workMode}
-                </li>
-                <li>
-                  <strong>Type:</strong> {job.employmentType}
-                </li>
-                <li>
-                  <strong>Experience:</strong> {job.yearsOfExperience}
-                </li>
-              </ul>
+                {/* Recruiter & Meta */}
+                <ul className="text-sm text-slate-700 space-y-1 mb-4">
+                  <li>
+                    <strong>Recruiter ID:</strong> {job.recruiterId}
+                  </li>
+                  <li>
+                    <strong>Posted On:</strong>{" "}
+                    {new Date(job.createdAt).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </li>
+                  <li>
+                    <strong>Job ID:</strong> {job._id}
+                  </li>
+                </ul>
 
-              {/* Skills */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {job.skillsRequired.map((skill, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-md"
-                  >
-                    {skill}
-                  </span>
-                ))}
+                {/* Spacer pushes buttons to bottom */}
+                <div className="flex-grow"></div>
+
+                {/* Buttons */}
+                <div className="flex gap-3 mt-4">
+                  <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition">
+                    Save for Later
+                  </button>
+                  <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
+                    Read More
+                  </button>
+                </div>
               </div>
-
-              {/* Spacer pushes buttons to bottom */}
-              <div className="flex-grow"></div>
-
-              {/* Buttons always pinned bottom */}
-              <div className="flex gap-3 mt-4">
-                <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition">
-                  Save for Later
-                </button>
-                <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
-                  Apply Now
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
