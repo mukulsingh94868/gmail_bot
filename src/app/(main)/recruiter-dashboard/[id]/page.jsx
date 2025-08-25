@@ -4,14 +4,17 @@ import JobDetailPageByRecruiter from "@/components/recruiterDashboard/JobDetailP
 
 const JobDetailPage = async ({ searchParams, params }) => {
   const JobDataById = await getJobPostByRecruiterId(
-    `jobpost/getJobPostById/${params.id}`
+    `jd/getJd/${params?.id}`
   );
+  // const JobDataById = await getJobPostByRecruiterId(
+  //   `jobpost/getJobPostById/${params.id}`
+  // );
   const fetchJobPostData = await fetchJobOptions(
     "jobpost/getJobsPostByRecruiter"
   );
   return (
     <JobDetailPageByRecruiter
-      JobDataById={JobDataById?.data}
+      JobDataById={JobDataById?.jobPost}
       fetchJobPostData={fetchJobPostData?.data}
     />
   );

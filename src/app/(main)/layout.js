@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer/Footer";
 import { Geist, Geist_Mono } from "next/font/google";
+import "react-quill-new/dist/quill.snow.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

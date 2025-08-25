@@ -11,7 +11,8 @@ const JobDetailPageByRecruiter = ({ JobDataById, fetchJobPostData }) => {
   const otherData = fetchJobPostData?.filter(
     (item) => item._id !== JobDataById?._id
   );
-  console.log("otherData", otherData);
+
+  if (!JobDataById) return <p>Loading...</p>;
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-4 py-6 flex flex-col">
       <RecruiterHeader
@@ -20,7 +21,7 @@ const JobDetailPageByRecruiter = ({ JobDataById, fetchJobPostData }) => {
       />
 
       <div className="flex-1 w-full mt-6">
-        <div className="bg-white rounded-2xl shadow-lg p-8 w-full h-full">
+        {/* <div className="bg-white rounded-2xl shadow-lg p-8 w-full h-full">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 mb-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
@@ -111,13 +112,23 @@ const JobDetailPageByRecruiter = ({ JobDataById, fetchJobPostData }) => {
               {JobDataById?.isApplied ? "Applied" : "Apply Now"}
             </button>
           </div>
+        </div> */}
+
+        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
+          <h1 className="text-2xl font-bold text-slate-800 mb-4">
+            Job Details
+          </h1>
+          <div
+            className="prose max-w-none text-slate-700"
+            dangerouslySetInnerHTML={{ __html: JobDataById?.JD }}
+          />
         </div>
 
-        <div className="mx-auto w-full grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
+        {/* <div className="mx-auto w-full grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
           {otherData?.map((job) => (
             <Card key={job._id} job={job} />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
