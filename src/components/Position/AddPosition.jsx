@@ -13,7 +13,7 @@ import {
   Plus,
   User,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import AddPositionModal from "../Modal/Modal";
@@ -29,6 +29,8 @@ import JobSection from "../JobSection/JobSection";
 const AddPosition = (props) => {
   const { fetchOptionsData, fetchAppliedDatas } = props;
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const emailId = searchParams.get("email") || "";
   const [email, setEmail] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [position, setPosition] = useState("");
@@ -107,8 +109,8 @@ const AddPosition = (props) => {
 
   const handleLogout = () => {
     localStorage.clear();
-    removeAuthToken('token');
-    removeAuthToken('role');
+    removeAuthToken("token");
+    removeAuthToken("role");
     toast.success("Logged out successfully");
     router.push("/");
   };
@@ -177,7 +179,10 @@ const AddPosition = (props) => {
                   <User /> {userName}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/recent-mails")}>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => router.push("/recent-mails")}
+                >
                   <Mail /> Recent Mails
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
