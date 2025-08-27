@@ -30,7 +30,6 @@ const AddPosition = (props) => {
   const { fetchOptionsData, fetchAppliedDatas } = props;
   const router = useRouter();
   const searchParams = useSearchParams();
-  const emailId = searchParams.get("email") || "";
   const [email, setEmail] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [position, setPosition] = useState("");
@@ -145,17 +144,24 @@ const AddPosition = (props) => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    const paramEmail = searchParams.get("emailId");
+    if (paramEmail) {
+      setEmail(paramEmail);
+    }
+  }, [searchParams]);
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-2 py-0 flex flex-col">
       <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm sticky top-0 z-30">
         <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-4">
           <div className="flex items-center gap-3">
-            <span className="text-2xl text-blue-700 font-bold tracking-tight">
+            <span className="text-2xl text-blue-700 font-bold tracking-tight cursor-pointer" onClick={() => router.push('/position')}>
               RecruitLoop
             </span>
           </div>
 
-          <div className="hidden md:flex gap-2 flex items-center">
+          <div className="md:flex gap-2 flex items-center">
             <button
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-all flex gap-2 cursor-pointer"
               onClick={() => setShowModal(true)}

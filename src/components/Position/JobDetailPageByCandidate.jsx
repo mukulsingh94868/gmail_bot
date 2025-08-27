@@ -140,9 +140,9 @@ const JobDetailPageByCandidate = ({
 
                 {/* Actions */}
                 <div className="flex gap-3 mt-auto">
-                  <button className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition">
+                  {/* <button className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition">
                     Save for Later
-                  </button>
+                  </button> */}
                   <button
                     className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition"
                     onClick={() => router.push(`/position/${item._id}`)}

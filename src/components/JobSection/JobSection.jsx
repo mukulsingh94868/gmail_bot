@@ -114,9 +114,9 @@ const JobSection = () => {
                 <div className="flex-grow"></div>
 
                 <div className="flex gap-3 mt-4">
-                  <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition">
+                  {/* <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition">
                     Save for Later
-                  </button>
+                  </button> */}
                   <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition" onClick={() => router.push(`/position/${job._id}`)}>
                     Read More
                   </button>
