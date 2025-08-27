@@ -1,54 +1,64 @@
-import { Briefcase, CheckCircle, Users } from "lucide-react";
+import { Calendar, User, FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 
 const Card = ({ job }) => {
   const router = useRouter();
+  const [expanded, setExpanded] = useState(false);
+
+  // Function to strip HTML tags (for preview text)
+  const stripHtml = (html) => {
+    if (!html) return "";
+    return html.replace(/<[^>]+>/g, ""); // remove tags
+  };
+
+  // Show preview only (first 200 chars) if not expanded
+  const previewText = stripHtml(job.JD).slice(0, 200);
+
   return (
     <div
       key={job._id}
-      onClick={() => router.push(`/recruiter-dashboard/${job?._id}`)}
-      className="cursor-pointer bg-white rounded-3xl shadow-lg border border-slate-100 p-7 flex flex-col justify-between hover:scale-[1.03] hover:shadow-2xl transition-all duration-200 group"
-      style={{ minHeight: '260px' }}
+      className="bg-white rounded-3xl shadow-lg border border-slate-100 p-7 flex flex-col justify-between hover:shadow-2xl transition-all duration-200 group"
     >
-      <div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-blue-700 transition">{job.title}</h2>
-        <p className="text-base text-slate-500 font-medium mb-1">
-          {job.location} <span className="text-xs text-slate-400">({job.workMode})</span>
-        </p>
-        <p className="text-xs text-slate-400 mb-2">
-          {new Date(job.createdAt).toLocaleDateString()} •{' '}
-          <span className={job.status === 'Open' ? 'text-green-600 font-semibold' : 'text-red-500 font-semibold'}>
-            {job.status === 'Open' ? 'Hiring Now' : 'Closed'}
-          </span>
-        </p>
+      {/* JD Preview */}
+      <div className="text-slate-700 prose prose-sm max-w-none">
+        {!expanded ? (
+          <>
+            <p>{previewText}...</p>
+            <button
+              onClick={() => router.push(`/recruiter-dashboard/${job._id}`)}
+              className="text-blue-600 font-medium hover:underline mt-2"
+            >
+              Read More →
+            </button>
+          </>
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: job.JD }} />
+        )}
       </div>
 
       {/* Meta Info */}
-      <div className="mt-4 space-y-3 text-[15px] text-slate-700">
+      <div className="mt-5 space-y-3 text-[14px] text-slate-700">
         <p className="flex items-center gap-2">
-          <Briefcase size={18} className="text-blue-600" />
-          <span className="font-medium">{job.employmentType}</span>
+          <User size={16} className="text-blue-600" />
+          <span className="font-medium">Recruiter ID: {job.recruiterId}</span>
         </p>
         <p className="flex items-center gap-2">
-          <Users size={18} className="text-emerald-600" />
-          <span className="font-medium">Exp: {job.yearsOfExperience} • {job.experienceLevel}</span>
+          <Calendar size={16} className="text-emerald-600" />
+          <span className="font-medium">
+            Posted on:{" "}
+            {new Date(job.createdAt).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
         </p>
         <p className="flex items-center gap-2">
-          <CheckCircle size={18} className="text-indigo-600" />
-          <span className="font-medium">Skills: {job.skillsRequired.join(', ')}</span>
+          <FileText size={16} className="text-indigo-600" />
+          <span className="font-medium">Job ID: {job._id}</span>
         </p>
       </div>
-
-      {/* Action Buttons (optional, uncomment if needed) */}
-      {/* <div className="mt-6 flex gap-2">
-        <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm">
-          Easy Apply
-        </button>
-        <button className="flex-1 border border-slate-300 hover:bg-slate-50 px-4 py-2 rounded-lg font-medium text-slate-700">
-          Save
-        </button>
-      </div> */}
     </div>
   );
 };

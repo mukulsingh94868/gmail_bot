@@ -53,7 +53,7 @@ const RecruiterHeader = ({ showJobModal, setShowJobModal }) => {
     <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm sticky top-0 z-30">
       <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-4">
         <div className="flex items-center gap-3">
-          <span className="text-2xl text-blue-700 font-bold tracking-tight">
+          <span className="text-2xl text-blue-700 font-bold tracking-tight cursor-pointer" onClick={() => router.push('/recruiter-dashboard')}>
             RecruitLoop
           </span>
         </div>
