@@ -27,7 +27,7 @@ const Card = ({ job }) => {
             <p>{previewText}...</p>
             <button
               onClick={() => router.push(`/recruiter-dashboard/${job._id}`)}
-              className="text-blue-600 font-medium hover:underline mt-2"
+              className="text-blue-600 font-medium hover:underline mt-2 cursor-pointer"
             >
               Read More →
             </button>

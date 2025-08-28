@@ -18,7 +18,6 @@ const RecruiterHeader = ({ showJobModal, setShowJobModal }) => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userName, setUserName] = useState("");
-
   const handleLogout = () => {
     localStorage.clear();
     removeAuthToken("token");
@@ -51,16 +50,15 @@ const RecruiterHeader = ({ showJobModal, setShowJobModal }) => {
   }, []);
   return (
     <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm sticky top-0 z-30">
-      <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-4">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl text-blue-700 font-bold tracking-tight cursor-pointer" onClick={() => router.push('/recruiter-dashboard')}>
+      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between py-4 px-2 sm:px-4 gap-3 sm:gap-0">
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-start">
+          <span className="text-2xl sm:text-2xl text-blue-700 font-bold tracking-tight cursor-pointer" onClick={() => router.push('/recruiter-dashboard')}>
             RecruitLoop
           </span>
         </div>
-
-        <div className="md:flex gap-2 flex items-center">
+        <div className="flex w-full sm:w-auto items-center justify-center sm:justify-end gap-2 mt-2 sm:mt-0">
           <button
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-all flex gap-2 cursor-pointer"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-all flex gap-2 cursor-pointer w-full sm:w-auto text-base sm:text-base"
             onClick={() => setShowJobModal(true)}
           >
             <Plus />
@@ -84,28 +82,27 @@ const RecruiterHeader = ({ showJobModal, setShowJobModal }) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-
-        <div className="md:hidden flex items-center">
-          <button
-            className="p-2 rounded-md text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            onClick={() => setMobileMenuOpen((v) => !v)}
-            aria-label="Open menu"
-          >
-            <svg
-              className="w-7 h-7"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
+          <div className="sm:hidden flex items-center">
+            <button
+              className="p-2 rounded-md text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-label="Open menu"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-7 h-7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

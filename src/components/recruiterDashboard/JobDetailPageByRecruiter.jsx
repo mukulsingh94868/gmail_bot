@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import { Briefcase, MapPin, Laptop, User, Calendar, Clock } from "lucide-react";
 import RecruiterHeader from "../RecruiterHeader/RecruiterHeader";
 import Card from "../Card/Card";
+import { useRouter } from "next/navigation";
 
 const JobDetailPageByRecruiter = ({ JobDataById, fetchJobPostData }) => {
+  const router = useRouter();
   const [showJobModal, setShowJobModal] = useState(false);
 
   const otherData = fetchJobPostData?.filter(
@@ -113,6 +115,16 @@ const JobDetailPageByRecruiter = ({ JobDataById, fetchJobPostData }) => {
             </button>
           </div>
         </div> */}
+
+        <div className="max-w-6xl mx-auto">
+          <button
+            className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer"
+            onClick={() => router.back()}
+          >
+            <span className="text-[25px] mb-1">←</span>
+            <span className="text-[15px]">Back</span>
+          </button>
+        </div>
 
         <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
           <h1 className="text-2xl font-bold text-slate-800 mb-4">
