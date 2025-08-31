@@ -59,12 +59,12 @@ const JobDetailPageByCandidate = ({
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Job Details</h1>
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-gray-500 text-sm mb-6">
-          <p className="flex items-center gap-2">
+          {/* <p className="flex items-center gap-2">
             <User size={16} /> Recruiter ID:{" "}
             <span className="font-medium text-gray-700">
               {JobDataCandidateById.recruiterId}
             </span>
-          </p>
+          </p> */}
           <p className="flex items-center gap-2 mt-2 sm:mt-0">
             <Calendar size={16} /> Posted On:{" "}
             <span className="font-medium text-gray-700">
@@ -85,7 +85,7 @@ const JobDetailPageByCandidate = ({
         <div className="mt-8 flex justify-center">
           <Button
             onClick={() => handleApply(JobDataCandidateById?.JD)}
-            className="inline-block bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-700 transition"
+            className="inline-block bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-700 transition cursor-pointer"
           >
             Apply Now
           </Button>
@@ -144,7 +144,7 @@ const JobDetailPageByCandidate = ({
                     Save for Later
                   </button> */}
                   <button
-                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition"
+                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition cursor-pointer"
                     onClick={() => router.push(`/position/${item._id}`)}
                   >
                     Read More

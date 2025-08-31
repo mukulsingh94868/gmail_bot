@@ -95,9 +95,9 @@ const JobSection = () => {
 
                 {/* Recruiter & Meta */}
                 <ul className="text-sm text-slate-700 space-y-1 mb-4">
-                  <li>
+                  {/* <li>
                     <strong>Recruiter ID:</strong> {job.recruiterId}
-                  </li>
+                  </li> */}
                   <li>
                     <strong>Posted On:</strong>{" "}
                     {new Date(job.createdAt).toLocaleDateString("en-GB", {
@@ -106,9 +106,9 @@ const JobSection = () => {
                       year: "numeric",
                     })}
                   </li>
-                  <li>
+                  {/* <li>
                     <strong>Job ID:</strong> {job._id}
-                  </li>
+                  </li> */}
                 </ul>
 
                 <div className="flex-grow"></div>
@@ -117,7 +117,7 @@ const JobSection = () => {
                   {/* <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition">
                     Save for Later
                   </button> */}
-                  <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition" onClick={() => router.push(`/position/${job._id}`)}>
+                  <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition cursor-pointer" onClick={() => router.push(`/position/${job._id}`)}>
                     Read More
                   </button>
                 </div>
