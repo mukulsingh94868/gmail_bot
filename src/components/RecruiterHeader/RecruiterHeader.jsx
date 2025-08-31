@@ -49,14 +49,18 @@ const RecruiterHeader = ({ showJobModal, setShowJobModal }) => {
     })();
   }, []);
   return (
-    <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm sticky top-0 z-30">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between py-4 px-2 sm:px-4 gap-3 sm:gap-0">
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-start">
-          <span className="text-2xl sm:text-2xl text-blue-700 font-bold tracking-tight cursor-pointer" onClick={() => router.push('/recruiter-dashboard')}>
+    <header className="bg-white shadow-md w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-3">
+        {/* Left Side: Logo */}
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-bold text-emerald-600">
             RecruitLoop
           </span>
         </div>
+
+        {/* Right Side */}
         <div className="flex w-full sm:w-auto items-center justify-center sm:justify-end gap-2 mt-2 sm:mt-0">
+          {/* Add Job Post Button */}
           <button
             className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-all flex gap-2 cursor-pointer w-full sm:w-auto text-base sm:text-base"
             onClick={() => setShowJobModal(true)}
@@ -64,27 +68,33 @@ const RecruiterHeader = ({ showJobModal, setShowJobModal }) => {
             <Plus />
             Add Job Post
           </button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <CircleUserRound size={25} />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="start">
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer">
-                <User /> {userName}
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={handleLogout}
-              >
-                <LogOut /> Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+          {/* Profile dropdown - only desktop */}
+          <div className="hidden sm:flex">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <CircleUserRound size={25} className="cursor-pointer" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer">
+                  <User /> {userName}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={handleLogout}
+                >
+                  <LogOut /> Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Burger menu - only mobile */}
           <div className="sm:hidden flex items-center">
             <button
-              className="p-2 rounded-md text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="p-2 rounded-md text-emerald-700 hover:bg-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-400"
               onClick={() => setMobileMenuOpen((v) => !v)}
               aria-label="Open menu"
             >
@@ -106,69 +116,19 @@ const RecruiterHeader = ({ showJobModal, setShowJobModal }) => {
         </div>
       </div>
 
+      {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/20 z-40 md:hidden"
-            onClick={() => setMobileMenuOpen(false)}
-            aria-label="Close menu"
-          />
-          <div className="fixed top-5 right-4 z-50 md:hidden animate-fade-in">
-            <div className="rounded-2xl shadow-2xl border border-slate-200 bg-white/95 min-w-[210px] max-w-[90vw] flex flex-col py-2 px-2">
-              <button
-                className="self-end text-slate-400 hover:text-blue-700 text-xl px-2 py-1 focus:outline-none"
-                onClick={() => setMobileMenuOpen(false)}
-                aria-label="Close menu"
-              >
-                &times;
-              </button>
-              <nav className="flex flex-col gap-1 mt-1">
-                <button
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-emerald-700 hover:bg-emerald-50 focus:bg-emerald-100 transition cursor-pointer"
-                  onClick={() => {
-                    setShowJobModal(true);
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  <Plus size={15} /> Add Job Post
-                </button>
-                <button
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-indigo-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
-                  onClick={() => {
-                    router.push("/template-listing");
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  <FileText size={15} /> Templates
-                </button>
-                <button
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-rose-700 hover:bg-rose-50 focus:bg-rose-100 transition cursor-pointer"
-                  onClick={() => {
-                    handleLogout();
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  <LogOut size={15} /> Logout
-                </button>
-              </nav>
-            </div>
-          </div>
-          <style jsx>{`
-            @keyframes fade-in {
-              from {
-                opacity: 0;
-                transform: translateY(-10px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
-            }
-            .animate-fade-in {
-              animation: fade-in 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-          `}</style>
-        </>
+        <div className="sm:hidden bg-gray-50 border-t border-gray-200 p-4 space-y-3">
+          <p className="flex items-center gap-2">
+            <User /> {userName}
+          </p>
+          <button
+            className="flex items-center gap-2 text-red-600"
+            onClick={handleLogout}
+          >
+            <LogOut /> Log out
+          </button>
+        </div>
       )}
     </header>
   );
