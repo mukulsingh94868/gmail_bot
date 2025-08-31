@@ -155,13 +155,18 @@ const AddPosition = (props) => {
     <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-2 py-0 flex flex-col">
       <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm sticky top-0 z-30">
         <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-4">
+          {/* Logo */}
           <div className="flex items-center gap-3">
-            <span className="text-2xl text-blue-700 font-bold tracking-tight cursor-pointer" onClick={() => router.push('/position')}>
+            <span
+              className="text-2xl text-blue-700 font-bold tracking-tight cursor-pointer"
+              onClick={() => router.push("/position")}
+            >
               RecruitLoop
             </span>
           </div>
 
-          <div className="md:flex gap-2 flex items-center">
+          {/* Right side - Desktop only */}
+          <div className="hidden md:flex gap-2 items-center">
             <button
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-all flex gap-2 cursor-pointer"
               onClick={() => setShowModal(true)}
@@ -171,7 +176,7 @@ const AddPosition = (props) => {
             </button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <CircleUserRound size={25} />
+                <CircleUserRound size={25} className="cursor-pointer" />
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="start">
                 <DropdownMenuItem
@@ -202,6 +207,7 @@ const AddPosition = (props) => {
             </DropdownMenu>
           </div>
 
+          {/* Burger menu - Mobile only */}
           <div className="md:hidden flex items-center">
             <button
               className="p-2 rounded-md text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -225,6 +231,7 @@ const AddPosition = (props) => {
           </div>
         </div>
 
+        {/* Mobile menu drawer */}
         {mobileMenuOpen && (
           <>
             <div
@@ -268,6 +275,11 @@ const AddPosition = (props) => {
                     }}
                   >
                     <Mail size={15} /> Recent Mails
+                  </button>
+                  <button
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-gray-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
+                  >
+                    <User size={15} /> {userName}
                   </button>
                   <button
                     className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-rose-700 hover:bg-rose-50 focus:bg-rose-100 transition cursor-pointer"
@@ -324,7 +336,7 @@ const AddPosition = (props) => {
               placeholder="Enter HR Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 rounded-lg border border-slate-300 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-slate-800 text-base"
+              className="w-full p-3 rounded-lg border border-slate-300 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-slate-800 text-base font-bold"
             />
 
             <button
