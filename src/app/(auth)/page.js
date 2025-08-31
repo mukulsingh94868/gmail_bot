@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { setAuthToken } from "@/utils/CookieData";
 import { registerLoginAction } from "@/actions/loginActions";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react"; // ✅ Added Loader2
 
 const HRBotApp = () => {
   const router = useRouter();
@@ -13,6 +13,7 @@ const HRBotApp = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // ✅ loading state
 
   const [formData, setFormData] = useState({
     name: "",
@@ -37,7 +38,6 @@ const HRBotApp = () => {
     const { name, value, type, checked } = e.target;
 
     if (type === "checkbox" && name === "role") {
-      // checkbox → recruiter or candidate
       setFormData((prev) => ({
         ...prev,
         role: checked ? "recruiter" : "candidate",
@@ -50,7 +50,7 @@ const HRBotApp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Frontend validation before API call
+    // ✅ Basic validation
     if (isLogin) {
       if (!formData.email || !formData.password) {
         return toast.error("Email and password are required");
@@ -69,6 +69,7 @@ const HRBotApp = () => {
       }
     }
 
+    setLoading(true); // ✅ Start loading
     const endpoint = isLogin ? `auth/login` : `auth/register`;
 
     try {
@@ -76,14 +77,15 @@ const HRBotApp = () => {
         ? {
             email: formData.email,
             password: formData.password,
-            role: formData.role,
+            role: formData.role || "candidate",
           }
         : {
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            role: formData.role,
+            role: formData.role || "candidate",
           };
+
       const res = await registerLoginAction(endpoint, payload);
 
       if (res?.error) {
@@ -101,9 +103,13 @@ const HRBotApp = () => {
 
       if (isLogin) {
         if (res?.token) {
-          toast.success(`Login successful as ${formData?.role}`);
+          toast.success(`Login successful as ${res?.data?.role}`);
           setAuthToken(res.token, "token");
           setAuthToken(res?.data?.role, "role");
+          setFormData((prev) => ({
+            ...prev,
+            role: res?.data?.role || prev.role,
+          }));
 
           if (res?.data?.role === "recruiter") {
             router.push("/recruiter-dashboard");
@@ -129,6 +135,8 @@ const HRBotApp = () => {
     } catch (err) {
       console.error("Error:", err);
       toast.error("Network error");
+    } finally {
+      setLoading(false); // ✅ Stop loading
     }
   };
 
@@ -209,7 +217,6 @@ const HRBotApp = () => {
             </div>
           )}
 
-          {/* ✅ Role checkbox */}
           {!isLogin && (
             <div className="flex items-center space-x-2">
               <input
@@ -226,11 +233,24 @@ const HRBotApp = () => {
             </div>
           )}
 
+          {/* ✅ Submit Button with loader */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold cursor-pointer"
+            disabled={loading}
+            className={`w-full flex items-center justify-center gap-2 ${
+              loading
+                ? "bg-blue-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            } text-white py-2 rounded-lg font-semibold`}
           >
-            {isLogin ? "Login" : "Register"}
+            {loading ? (
+              <>
+                {/* <Loader2 className="animate-spin" size={18} /> */}
+                {isLogin ? "Logging in..." : "Registering..."}
+              </>
+            ) : (
+              <>{isLogin ? "Login" : "Register"}</>
+            )}
           </button>
         </form>
 
