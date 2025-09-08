@@ -40,8 +40,8 @@ const Card = ({ job }) => {
       {/* Meta Info */}
       <div className="mt-5 space-y-3 text-[14px] text-slate-700">
         <p className="flex items-center gap-2">
-          <User size={16} className="text-blue-600" />
-          <span className="font-medium">Recruiter ID: {job.recruiterId}</span>
+          {/* <User size={16} className="text-blue-600" /> */}
+          {/* <span className="font-medium">Recruiter ID: {job.recruiterId}</span> */}
         </p>
         <p className="flex items-center gap-2">
           <Calendar size={16} className="text-emerald-600" />
@@ -55,8 +55,8 @@ const Card = ({ job }) => {
           </span>
         </p>
         <p className="flex items-center gap-2">
-          <FileText size={16} className="text-indigo-600" />
-          <span className="font-medium">Job ID: {job._id}</span>
+          {/* <FileText size={16} className="text-indigo-600" /> */}
+          {/* <span className="font-medium">Job ID: {job._id}</span> */}
         </p>
       </div>
     </div>
