@@ -199,6 +199,20 @@ const AddPosition = (props) => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
+                  onClick={() => router.push("/saved-mails")}
+                >
+                  <Mail /> Saved Mails
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => router.push("/applied-mails")}
+                >
+                  <Mail /> Applied Mails
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
                   onClick={handleLogout}
                 >
                   <LogOut /> Log out
@@ -275,6 +289,24 @@ const AddPosition = (props) => {
                     }}
                   >
                     <Mail size={15} /> Recent Mails
+                  </button>
+                  <button
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-yellow-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
+                    onClick={() => {
+                      router.push("/saved-mails");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <Mail size={15} /> Saved Mails
+                  </button>
+                  <button
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-yellow-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
+                    onClick={() => {
+                      router.push("/applied-mails");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <Mail size={15} /> Applied Mails
                   </button>
                   <button
                     className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-gray-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
