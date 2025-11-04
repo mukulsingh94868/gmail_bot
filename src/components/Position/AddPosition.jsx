@@ -152,7 +152,7 @@ const AddPosition = (props) => {
     }
   }, [searchParams]);
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-2 py-0 flex flex-col">
+    <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-4 py-0 flex flex-col">
       <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm sticky top-0 z-30">
         <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-4">
           {/* Logo */}
@@ -171,8 +171,7 @@ const AddPosition = (props) => {
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-all flex gap-2 cursor-pointer"
               onClick={() => setShowModal(true)}
             >
-              <Plus />
-              Add Template
+              <Plus /> Add Template
             </button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -195,6 +194,13 @@ const AddPosition = (props) => {
                   onClick={() => router.push("/recent-mails")}
                 >
                   <Mail /> Recent Mails
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => router.push("/saved-mails")}
+                >
+                  <Mail /> Saved Mails
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -277,8 +283,15 @@ const AddPosition = (props) => {
                     <Mail size={15} /> Recent Mails
                   </button>
                   <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-gray-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-yellow-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
+                    onClick={() => {
+                      router.push("/saved-mails");
+                      setMobileMenuOpen(false);
+                    }}
                   >
+                    <Mail size={15} /> Saved Mails
+                  </button>
+                  <button className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-gray-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer">
                     <User size={15} /> {userName}
                   </button>
                   <button
@@ -312,7 +325,7 @@ const AddPosition = (props) => {
         )}
       </header>
 
-      <main className="flex-1 w-full flex flex-col items-center justify-center py-10">
+      <main className="flex-1 w-full flex flex-col items-center justify-center py-6 md:py-10">
         {fetchOptionsData?.length ? (
           <div className="w-full max-w-2xl bg-white/90 border border-slate-200 shadow-xl rounded-2xl px-8 py-10 flex flex-col gap-8">
             <h2 className="text-2xl font-semibold text-slate-800 mb-2 text-center tracking-tight">
@@ -363,11 +376,11 @@ const AddPosition = (props) => {
             </button>
           </div>
         )}
-
-        <div>
-          <JobSection />
-        </div>
       </main>
+
+      <div>
+        <JobSection />
+      </div>
 
       {showModal && (
         <AddPositionModal showModal={showModal} setShowModal={setShowModal} />
