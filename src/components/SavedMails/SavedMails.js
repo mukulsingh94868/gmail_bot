@@ -1,8 +1,8 @@
 "use client";
 
-import { FileText, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const SavedMails = ({ fetchSavedData }) => {
   const router = useRouter();
@@ -13,69 +13,66 @@ const SavedMails = ({ fetchSavedData }) => {
   useEffect(() => {
     setSavedMailData(fetchSavedData);
   }, [fetchSavedData]);
+
+  const extractLocation = (jd) => {
+    const match = jd.match(/📍 Location: (.*?)<\/p>/);
+    return match ? match[1] : "Not Available";
+  };
+
+  const extractEmail = (jd) => {
+    const match = jd.match(/mailto:(.*?)["|']/);
+    return match ? match[1] : "email@example.com";
+  };
+
   return (
-    <div className="w-full flex justify-center px-2 sm:px-6 md:px-12 lg:px-0">
-      {savedMailData?.length > 0 && (
-        <div className="w-full max-w-4xl mt-10">
-          <div className="mb-10">
-            <button
-              className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer"
-              onClick={() => router.back()}
+    <div className="container mx-auto px-4 py-6">
+      <div className="mb-10">
+        <button
+          className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer"
+          onClick={() => router.back()}
+        >
+          <span className="text-[25px] mb-1">←</span>
+          <span className="text-[15px]">Back</span>
+        </button>
+      </div>
+      <h1 className="text-3xl font-semibold text-center mb-8">Saved Mails</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {savedMailData?.length > 0 ? (
+          savedMailData?.map((item) => (
+            <div
+              key={item?._id}
+              className="bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden"
             >
-              <span className="text-[25px] mb-1">←</span>
-              <span className="text-[15px]">Back</span>
-            </button>
-          </div>
-          <h3 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2 border-b border-slate-200 pb-4">
-            <span className="text-3xl">📜</span> Recent Activity
-          </h3>
-          <div className="overflow-x-auto rounded-2xl shadow-md bg-white">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 whitespace-nowrap">
-                    Email
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 whitespace-nowrap">
-                    Position
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 whitespace-nowrap">
-                    Date & Time
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {savedMailData?.map((item, idx) => (
-                  <tr key={idx} className="hover:bg-blue-50 transition">
-                    <td className="px-4 py-4 text-base text-slate-800 font-medium flex items-center gap-2 whitespace-nowrap">
-                      <Mail className="text-blue-600" size={18} />
-                      <span className="break-all">{item.emailApplied}</span>
-                    </td>
-                    <td className="px-4 py-4 text-base text-blue-700 font-semibold whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <FileText className="text-indigo-600" size={16} />
-                        <span className="bg-blue-100 px-2 py-1 rounded-md text-sm">
-                          {item?.positionApplied}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 text-xs text-slate-500 font-medium whitespace-nowrap">
-                      {new Date(item?.dateAndTime).toLocaleString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+              <div className="p-6">
+                <h3 className="text-xl font-semibold text-blue-700">
+                  {item?.JD
+                    ? item?.JD?.split("<p>")[0]?.replace(/<\/?[^>]+(>|$)/g, "")
+                    : "Job Title"}
+                </h3>
+                <p className="text-sm text-gray-600 mt-2">
+                  <strong>Location:</strong> {extractLocation(item?.JD)}
+                </p>
+                <p className="text-sm text-gray-600 mt-2">
+                  <strong>Posted on:</strong>{" "}
+                  {new Date(item?.createdAt).toLocaleDateString()}
+                </p>
+
+                <div className="mt-4">
+                  <button
+                    className="cursor-pointer p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg w-full text-center font-medium transition"
+                    onClick={() => router.push(`/position/${item?.jobId}`)}
+                  >
+                    Read More
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-500">No saved mails available.</p>
+        )}
+      </div>
     </div>
   );
 };
