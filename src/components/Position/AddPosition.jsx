@@ -200,7 +200,7 @@ const AddPosition = (props) => {
                   className="cursor-pointer"
                   onClick={() => router.push("/saved-mails")}
                 >
-                  <Mail /> Saved Mails
+                  <Mail /> Saved Jobs
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -289,7 +289,7 @@ const AddPosition = (props) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <Mail size={15} /> Saved Mails
+                    <Mail size={15} /> Saved Jobs
                   </button>
                   <button className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-gray-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer">
                     <User size={15} /> {userName}

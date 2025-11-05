@@ -5,6 +5,8 @@ import { ArrowLeft, Calendar, User, MapPin, Briefcase } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import { saveForLater } from "@/actions/addPositionActions";
+import toast from "react-hot-toast";
 
 const JobDetailPageByCandidate = ({
   JobDataCandidateById,
@@ -33,12 +35,27 @@ const JobDetailPageByCandidate = ({
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     const emails = jobHtml.match(emailRegex);
 
-    console.log('Extracted emails:', emails);
+    console.log("Extracted emails:", emails);
     if (emails && emails.length > 0) {
       const email = emails[0]; // take first email found
       router.push(`/position?emailId=${encodeURIComponent(email)}`);
     } else {
       alert("No email found in job description");
+    }
+  };
+
+  const handleSaveForLater = async (e, jobId) => {
+    e.stopPropagation();
+    const payload = { jobId };
+    try {
+      const result = await saveForLater("savedjobs", payload);
+      if (result?.statusCode === 201) {
+        toast.success(result?.message || "Job saved successfully");
+      } else {
+        toast.error(result?.message || "Failed to save job");
+      }
+    } catch (error) {
+      toast.error("Failed to save job: " + (error?.message || error));
     }
   };
 
@@ -140,9 +157,12 @@ const JobDetailPageByCandidate = ({
 
                 {/* Actions */}
                 <div className="flex gap-3 mt-auto">
-                  {/* <button className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition">
+                  <button
+                    className="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition"
+                    onClick={(e) => handleSaveForLater(e, item?._id)}
+                  >
                     Save for Later
-                  </button> */}
+                  </button>
                   <button
                     className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition cursor-pointer"
                     onClick={() => router.push(`/position/${item._id}`)}

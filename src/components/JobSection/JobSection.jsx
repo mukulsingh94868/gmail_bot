@@ -1,8 +1,9 @@
 "use client";
 
-import { fetchAppliedData } from "@/actions/addPositionActions";
+import { fetchAppliedData, saveForLater } from "@/actions/addPositionActions";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 const JobSection = () => {
   const router = useRouter();
@@ -38,15 +39,29 @@ const JobSection = () => {
     setCurrentPage(1);
   };
 
-  useEffect(() => {
-    fetchJobs(currentPage, limit);
-  }, [currentPage, limit]);
-
-  // helper to strip HTML tags for preview
   const stripHtml = (html) => {
     if (!html) return "";
     return html.replace(/<[^>]+>/g, "");
   };
+
+  const handleSaveForLater = async (e, jobId) => {
+    e.stopPropagation();
+    const payload = { jobId };
+    try {
+      const result = await saveForLater("savedjobs", payload);
+      if (result?.statusCode === 201) {
+        toast.success(result?.message || "Job saved successfully");
+      } else {
+        toast.error(result?.message || "Failed to save job");
+      }
+    } catch (error) {
+      toast.error("Failed to save job: " + (error?.message || error));
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs(currentPage, limit);
+  }, [currentPage, limit]);
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-6">
@@ -114,10 +129,16 @@ const JobSection = () => {
                 <div className="flex-grow"></div>
 
                 <div className="flex gap-3 mt-4">
-                  {/* <button className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition">
+                  <button
+                    className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition"
+                    onClick={(e) => handleSaveForLater(e, job?._id)}
+                  >
                     Save for Later
-                  </button> */}
-                  <button className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition cursor-pointer" onClick={() => router.push(`/position/${job._id}`)}>
+                  </button>
+                  <button
+                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition cursor-pointer"
+                    onClick={() => router.push(`/position/${job._id}`)}
+                  >
                     Read More
                   </button>
                 </div>
@@ -130,37 +151,39 @@ const JobSection = () => {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-8">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Prev
-          </button>
+          <div>
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
 
-          {Array.from({ length: totalPages }, (_, idx) => idx + 1).map(
-            (page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === page
-                    ? "bg-blue-600 text-white"
-                    : "hover:bg-slate-100"
-                }`}
-              >
-                {page}
-              </button>
-            )
-          )}
+            {Array.from({ length: totalPages }, (_, idx) => idx + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-3 py-1 border rounded ${
+                    currentPage === page
+                      ? "bg-blue-600 text-white"
+                      : "hover:bg-slate-100"
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-50"
-          >
-            Next
-          </button>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
     </div>
