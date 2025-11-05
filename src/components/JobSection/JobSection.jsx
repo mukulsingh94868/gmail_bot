@@ -103,16 +103,19 @@ const JobSection = () => {
                 key={job._id}
                 className="flex flex-col bg-white border border-slate-200 shadow-sm rounded-xl p-5 hover:shadow-md transition"
               >
-                {/* Job JD preview */}
+                <div className="flex justify-end">
+                  {job?.isSaved && (
+                    <p className="text-white bg-blue-600 p-[5px] rounded-[8px] text-[10px]">
+                      Saved
+                    </p>
+                  )}
+                </div>
+
                 <div className="text-slate-700 text-sm mb-3 line-clamp-4">
                   {preview}...
                 </div>
 
-                {/* Recruiter & Meta */}
                 <ul className="text-sm text-slate-700 space-y-1 mb-4">
-                  {/* <li>
-                    <strong>Recruiter ID:</strong> {job.recruiterId}
-                  </li> */}
                   <li>
                     <strong>Posted On:</strong>{" "}
                     {new Date(job.createdAt).toLocaleDateString("en-GB", {
@@ -121,9 +124,6 @@ const JobSection = () => {
                       year: "numeric",
                     })}
                   </li>
-                  {/* <li>
-                    <strong>Job ID:</strong> {job._id}
-                  </li> */}
                 </ul>
 
                 <div className="flex-grow"></div>

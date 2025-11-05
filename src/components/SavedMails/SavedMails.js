@@ -1,14 +1,13 @@
 "use client";
 
-import { Mail } from "lucide-react";
+import { deleteSavedJobs } from "@/actions/addPositionActions";
+import { Mail, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const SavedMails = ({ fetchSavedData }) => {
   const router = useRouter();
   const [savedMailData, setSavedMailData] = useState(fetchSavedData || []);
-
-  console.log("fetchSavedData", fetchSavedData);
 
   useEffect(() => {
     setSavedMailData(fetchSavedData);
@@ -22,6 +21,13 @@ const SavedMails = ({ fetchSavedData }) => {
   const extractEmail = (jd) => {
     const match = jd.match(/mailto:(.*?)["|']/);
     return match ? match[1] : "email@example.com";
+  };
+
+  const handleDeleteJobs = async (jobId) => {
+    const result = await deleteSavedJobs(`savedjobs/${jobId}`);
+    if (result?.statusCode === 200) {
+      toast.success(result?.message || "Job removed from saved list");
+    }
   };
 
   return (
@@ -45,6 +51,12 @@ const SavedMails = ({ fetchSavedData }) => {
               className="bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden"
             >
               <div className="p-6">
+                <div
+                  className="flex justify-end p-2 rounded-full hover:bg-red-600"
+                  onClick={() => handleDeleteJobs(item?.jobId)}
+                >
+                  <Trash2 className="text-gray-600 hover:text-red-600" />
+                </div>
                 <h3 className="text-xl font-semibold text-blue-700">
                   {item?.JD
                     ? item?.JD?.split("<p>")[0]?.replace(/<\/?[^>]+(>|$)/g, "")
