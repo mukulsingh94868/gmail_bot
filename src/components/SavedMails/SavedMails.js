@@ -42,7 +42,6 @@ const SavedMails = ({ fetchSavedData }) => {
         </button>
       </div>
       <h1 className="text-3xl font-semibold text-center mb-8">Saved Jobs</h1>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {savedMailData?.length > 0 ? (
           savedMailData?.map((item) => (

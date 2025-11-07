@@ -8,6 +8,7 @@ import { getAuthToken, removeAuthToken } from "@/utils/CookieData";
 import {
   CircleUserRound,
   FileText,
+  LayoutDashboard,
   LogOut,
   Mail,
   Plus,
@@ -180,6 +181,13 @@ const AddPosition = (props) => {
               <DropdownMenuContent className="w-56" align="start">
                 <DropdownMenuItem
                   className="cursor-pointer"
+                  onClick={() => router.push("/dashboard-analytics")}
+                >
+                  <LayoutDashboard /> Analytics
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
                   onClick={() => router.push("/template-listing")}
                 >
                   <FileText /> Templates
@@ -255,6 +263,15 @@ const AddPosition = (props) => {
                   &times;
                 </button>
                 <nav className="flex flex-col gap-1 mt-1">
+                  <button
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-emerald-700 hover:bg-emerald-50 focus:bg-emerald-100 transition cursor-pointer"
+                    onClick={() => {
+                      router.push("/dashboard-analytics");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <LayoutDashboard size={15} /> Analytics
+                  </button>
                   <button
                     className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-emerald-700 hover:bg-emerald-50 focus:bg-emerald-100 transition cursor-pointer"
                     onClick={() => {
