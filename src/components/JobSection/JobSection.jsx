@@ -4,6 +4,14 @@ import { fetchAppliedData, saveForLater } from "@/actions/addPositionActions";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "../ui/pagination";
 
 const JobSection = () => {
   const router = useRouter();
@@ -57,6 +65,23 @@ const JobSection = () => {
     } catch (error) {
       toast.error("Failed to save job: " + (error?.message || error));
     }
+  };
+
+  const getVisiblePages = (totalPages, currentPage) => {
+    const delta = 2;
+    const range = [];
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+    if (currentPage - delta > 2) range.unshift("...");
+    if (currentPage + delta < totalPages - 1) range.push("...");
+    range.unshift(1);
+    if (totalPages > 1) range.push(totalPages);
+    return range;
   };
 
   useEffect(() => {
@@ -149,7 +174,7 @@ const JobSection = () => {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {/* {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-8">
           <div>
             <button
@@ -184,6 +209,48 @@ const JobSection = () => {
               Next
             </button>
           </div>
+        </div>
+      )} */}
+
+      {/* Pagination using ShadCN */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
+                />
+              </PaginationItem>
+
+              {getVisiblePages(totalPages, currentPage).map(
+                (page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      onClick={() => handlePageChange(page)}
+                      isActive={currentPage === page}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              )}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
     </div>
