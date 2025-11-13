@@ -193,9 +193,6 @@ const AddPosition = (props) => {
                   <FileText /> Templates
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
-                  <User /> {userName}
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
@@ -270,17 +267,21 @@ const AddPosition = (props) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <LayoutDashboard size={15} /> Analytics
+                    <LayoutDashboard size={15} className="text-gray-700" />
+                    <span className="text-gray-700">Analytics</span>
                   </button>
+
                   <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-emerald-700 hover:bg-emerald-50 focus:bg-emerald-100 transition cursor-pointer"
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-teal-600 hover:bg-teal-50 focus:bg-teal-100 transition cursor-pointer"
                     onClick={() => {
                       setShowModal(true);
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <Plus size={15} /> Add Template
+                    <Plus size={15} className="text-teal-600" />
+                    <span className="text-teal-600">Add Template</span>
                   </button>
+
                   <button
                     className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-indigo-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
                     onClick={() => {
@@ -288,29 +289,32 @@ const AddPosition = (props) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <FileText size={15} /> Templates
+                    <FileText size={15} className="from-blue-700" />
+                    <span className="from-blue-700">Templates</span>
                   </button>
+
                   <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-yellow-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-amber-600 hover:bg-amber-50 focus:bg-amber-100 transition cursor-pointer"
                     onClick={() => {
                       router.push("/recent-mails");
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <Mail size={15} /> Recent Mails
+                    <Mail size={15} className="text-amber-600" />
+                    <span className="text-amber-600">Recent Mails</span>
                   </button>
+
                   <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-yellow-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-violet-600 hover:bg-violet-50 focus:bg-violet-100 transition cursor-pointer"
                     onClick={() => {
                       router.push("/saved-mails");
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <Mail size={15} /> Saved Jobs
+                    <Mail size={15} className="text-lime-400" />
+                    <span className="text-lime-400">Saved Jobs</span>
                   </button>
-                  <button className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-gray-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer">
-                    <User size={15} /> {userName}
-                  </button>
+
                   <button
                     className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-rose-700 hover:bg-rose-50 focus:bg-rose-100 transition cursor-pointer"
                     onClick={() => {
@@ -318,7 +322,8 @@ const AddPosition = (props) => {
                       setMobileMenuOpen(false);
                     }}
                   >
-                    <LogOut size={15} /> Logout
+                    <LogOut size={15} className="text-rose-700" />
+                    <span className="text-rose-700">Logout</span>
                   </button>
                 </nav>
               </div>
@@ -344,10 +349,16 @@ const AddPosition = (props) => {
 
       <main className="flex-1 w-full flex flex-col items-center justify-center py-6 md:py-10">
         {fetchOptionsData?.length ? (
-          <div className="w-full max-w-2xl bg-white/90 border border-slate-200 shadow-xl rounded-2xl px-8 py-10 flex flex-col gap-8">
-            <h2 className="text-2xl font-semibold text-slate-800 mb-2 text-center tracking-tight">
-              Apply for a Position
-            </h2>
+          <div className="w-full max-w-2xl bg-white/90 border border-slate-200 shadow-xl rounded-2xl px-8 py-10 flex flex-col gap-4">
+            <div className="text-center">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Hello {userName}, land your next great role — effortlessly.
+              </h2>
+              <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
+                Pick a position, personalize your message, and send with one
+                click. We’ll help your application stand out.
+              </p>
+            </div>
             <select
               value={position}
               onChange={handlePositionChange}
