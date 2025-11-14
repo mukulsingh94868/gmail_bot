@@ -4,15 +4,115 @@ import { FileText, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CandidateHeader from "../CandidateHeader/CandidateHeader";
+import toast from "react-hot-toast";
+import { fetchFollowUpData, sendFollowUpMail } from "@/actions/addPositionActions";
 
 const RecentMail = ({ fetchAppliedDatas }) => {
   const router = useRouter();
   const [history, setHistory] = useState(fetchAppliedDatas);
   const [showModal, setShowModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [followUpStatus, setFollowUpStatus] = useState({}); // { email: { followUpCount, canFollowUp, lastFollowUpDate } }
+  const [modalLoading, setModalLoading] = useState(false);
+  const [modalTemplate, setModalTemplate] = useState("");
 
   useEffect(() => {
     setHistory(fetchAppliedDatas);
   }, [fetchAppliedDatas]);
+
+  // Fetch follow-up status for each unique email in history
+  useEffect(() => {
+    if (!history || history.length === 0) return;
+    const unique = [...new Set(history.map((h) => h.emailApplied))];
+    unique.forEach((email) => {
+      fetchFollowUpStatus(email);
+    });
+  }, [history]);
+
+  const fetchFollowUpStatus = async (email) => {
+    try {
+      const response = await fetchFollowUpData(`followUp/check?emailApplied=${encodeURIComponent(email)}`);
+      setFollowUpStatus((prev) => ({ ...prev, [email]: response?.data }));
+    } catch (err) {
+      console.error("Failed to fetch follow-up status", err);
+    }
+  };
+
+  const sendFollowUpRequest = async ({
+    emailApplied,
+    positionApplied,
+    originalMailId,
+    template,
+  }) => {
+    try {
+      const payload = {
+        emailApplied,
+        positionApplied,
+        originalMailId,
+        followUpTemplate: template,
+      };
+      const result = await sendFollowUpMail("followUp/send", payload);
+      if (result?.statusCode === 201) {
+        toast.success(result?.message || "Follow-up sent successfully");
+      } else {
+        toast.error(result?.message);
+      }
+      return { ok: result.ok, result };
+    } catch (err) {
+      console.error("sendFollowUpRequest error", err);
+      return { ok: false, result: { message: err.message } };
+    }
+  };
+
+  const openFollowUpModal = (row) => {
+    setSelectedRow(row);
+    const defaultTemplate = `Hi,\n\nI hope you're well. I'm following up on my application for the ${row.positionApplied} position. I remain very interested and would appreciate any update you can share.\n\nThanks,\n[Your Name]`;
+    setModalTemplate(defaultTemplate);
+    setShowModal(true);
+  };
+
+  const closeFollowUpModal = () => {
+    setSelectedRow(null);
+    setShowModal(false);
+  };
+
+  const handleConfirmFollowUp = async () => {
+    if (!selectedRow) return;
+    const email = selectedRow.emailApplied;
+    const position = selectedRow.positionApplied;
+    const status = followUpStatus[email] || { followUpCount: 0 };
+    if (status.followUpCount >= 3) {
+      toast.error("Maximum follow-ups reached for this email");
+      return;
+    }
+    setModalLoading(true);
+
+    // open mail client (mailto)
+    const subject = `Follow-up: ${position}`;
+    const body = modalTemplate;
+    const mailto = `mailto:${encodeURIComponent(
+      email
+    )}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // open in new tab/window
+    window.open(mailto, "_blank");
+
+    // record the follow-up in backend
+    const { ok, json } = await sendFollowUpRequest({
+      emailApplied: email,
+      positionApplied: position,
+      originalMailId: selectedRow._id || null,
+      template: modalTemplate,
+    });
+
+    if (ok) {
+      toast.success(json?.message || "Follow-up recorded");
+      await fetchFollowUpStatus(email);
+      closeFollowUpModal();
+    } else {
+      toast.error(json?.message || "Failed to record follow-up");
+    }
+    setModalLoading(false);
+  };
   return (
     <>
       {/* <CandidateHeader showModal={showModal} setShowModal={setShowModal} /> */}
@@ -44,6 +144,9 @@ const RecentMail = ({ fetchAppliedDatas }) => {
                     <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 whitespace-nowrap">
                       Date & Time
                     </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700 whitespace-nowrap">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -71,6 +174,36 @@ const RecentMail = ({ fetchAppliedDatas }) => {
                           hour12: true,
                         })}
                       </td>
+                      <td className="px-4 py-4 text-sm text-slate-700 whitespace-nowrap">
+                        {/* Actions: Follow Up button with count */}
+                        {(() => {
+                          const status = followUpStatus[item.emailApplied] || {
+                            followUpCount: 0,
+                          };
+                          const count = status.followUpCount || 0;
+                          const disabled = count >= 3;
+                          return (
+                            <div className="flex items-center gap-2">
+                              <button
+                                className={`px-3 py-1 rounded-md text-sm font-medium ${
+                                  disabled
+                                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                                    : "bg-blue-600 text-white hover:shadow-md"
+                                }`}
+                                onClick={() => openFollowUpModal(item)}
+                                disabled={disabled}
+                              >
+                                Follow Up ({count}/3)
+                              </button>
+                              {disabled && (
+                                <span className="text-xs text-red-600 font-medium">
+                                  Max
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })()}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -79,6 +212,50 @@ const RecentMail = ({ fetchAppliedDatas }) => {
           </div>
         )}
       </div>
+
+      {/* Follow-up Modal */}
+      {showModal && selectedRow && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={closeFollowUpModal}
+          ></div>
+          <div className="relative bg-white rounded-lg shadow-lg w-[min(95%,600px)] mx-4 p-6">
+            <h3 className="text-lg font-semibold mb-2">Send Follow-up</h3>
+            <p className="text-sm text-slate-600 mb-4">
+              To:{" "}
+              <span className="font-medium">{selectedRow.emailApplied}</span> —
+              Position:{" "}
+              <span className="font-medium">{selectedRow.positionApplied}</span>
+            </p>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
+              Message
+            </label>
+            <textarea
+              value={modalTemplate}
+              onChange={(e) => setModalTemplate(e.target.value)}
+              className="w-full min-h-[140px] border border-slate-200 rounded-md p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+
+            <div className="mt-4 flex items-center justify-end gap-3">
+              <button
+                className="px-4 py-2 rounded-md bg-gray-100 text-sm"
+                onClick={closeFollowUpModal}
+                disabled={modalLoading}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded-md bg-blue-600 text-white text-sm disabled:opacity-60"
+                onClick={handleConfirmFollowUp}
+                disabled={modalLoading}
+              >
+                {modalLoading ? "Sending..." : "Send Follow-up"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
