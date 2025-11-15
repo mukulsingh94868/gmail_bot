@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import CandidateHeader from "../CandidateHeader/CandidateHeader";
 import toast from "react-hot-toast";
-import { fetchFollowUpData, sendFollowUpMail } from "@/actions/addPositionActions";
+import {
+  fetchFollowUpData,
+  sendFollowUpMail,
+} from "@/actions/addPositionActions";
 
 const RecentMail = ({ fetchAppliedDatas }) => {
   const router = useRouter();
@@ -31,7 +34,9 @@ const RecentMail = ({ fetchAppliedDatas }) => {
 
   const fetchFollowUpStatus = async (email) => {
     try {
-      const response = await fetchFollowUpData(`followUp/check?emailApplied=${encodeURIComponent(email)}`);
+      const response = await fetchFollowUpData(
+        `followUp/check?emailApplied=${encodeURIComponent(email)}`
+      );
       setFollowUpStatus((prev) => ({ ...prev, [email]: response?.data }));
     } catch (err) {
       console.error("Failed to fetch follow-up status", err);
@@ -51,16 +56,30 @@ const RecentMail = ({ fetchAppliedDatas }) => {
         originalMailId,
         followUpTemplate: template,
       };
+
       const result = await sendFollowUpMail("followUp/send", payload);
+
       if (result?.statusCode === 201) {
         toast.success(result?.message || "Follow-up sent successfully");
+
+        return {
+          ok: true,
+          json: result,
+        };
       } else {
         toast.error(result?.message);
+
+        return {
+          ok: false,
+          json: result,
+        };
       }
-      return { ok: result.ok, result };
     } catch (err) {
       console.error("sendFollowUpRequest error", err);
-      return { ok: false, result: { message: err.message } };
+      return {
+        ok: false,
+        json: { message: err.message },
+      };
     }
   };
 
@@ -78,25 +97,43 @@ const RecentMail = ({ fetchAppliedDatas }) => {
 
   const handleConfirmFollowUp = async () => {
     if (!selectedRow) return;
+
     const email = selectedRow.emailApplied;
     const position = selectedRow.positionApplied;
     const status = followUpStatus[email] || { followUpCount: 0 };
+
     if (status.followUpCount >= 3) {
       toast.error("Maximum follow-ups reached for this email");
       return;
     }
+
     setModalLoading(true);
 
-    // open mail client (mailto)
+    const isMobile =
+      typeof window !== "undefined" &&
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
     const subject = `Follow-up: ${position}`;
     const body = modalTemplate;
-    const mailto = `mailto:${encodeURIComponent(
-      email
-    )}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    // open in new tab/window
-    window.open(mailto, "_blank");
 
-    // record the follow-up in backend
+    // === Open mail client ===
+    if (isMobile) {
+      const mailto = `mailto:${encodeURIComponent(
+        email
+      )}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+        body
+      )}`;
+      window.location.href = mailto;
+    } else {
+      const gmailURL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(
+        email
+      )}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.open(gmailURL, "_blank");
+    }
+
+    // === Record follow-up ===
     const { ok, json } = await sendFollowUpRequest({
       emailApplied: email,
       positionApplied: position,
@@ -111,8 +148,10 @@ const RecentMail = ({ fetchAppliedDatas }) => {
     } else {
       toast.error(json?.message || "Failed to record follow-up");
     }
+
     setModalLoading(false);
   };
+
   return (
     <>
       {/* <CandidateHeader showModal={showModal} setShowModal={setShowModal} /> */}

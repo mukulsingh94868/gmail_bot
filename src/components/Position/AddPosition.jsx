@@ -99,6 +99,8 @@ const AddPosition = (props) => {
       const result = await positionApplied("apply/position-applied", payload);
       if (result?.statusCode === 201) {
         toast.success(result?.message || "Successfully sent email");
+        setEmail("");
+        setPosition("");
       } else {
         toast.error(result?.message || "Failed to record position");
       }
@@ -192,7 +194,6 @@ const AddPosition = (props) => {
                 >
                   <FileText /> Templates
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
