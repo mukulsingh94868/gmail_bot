@@ -90,19 +90,31 @@ const JobSection = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Available Jobs</h2>
-        <div className="flex items-center space-x-2">
-          <label htmlFor="limit" className="text-sm font-medium text-gray-700">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4 sm:gap-0">
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 text-center sm:text-left">
+          Available Jobs
+        </h2>
+
+        <div className="flex items-center justify-center gap-2 sm:gap-3">
+          <label
+            htmlFor="limit"
+            className="text-sm font-medium text-gray-600 whitespace-nowrap"
+          >
             Rows per page:
           </label>
+
           <select
             id="limit"
             value={limit}
             onChange={handleLimitChange}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm 
-               shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 
-               transition ease-in-out duration-150 cursor-pointer"
+            className="
+        rounded-xl border border-gray-300 bg-white 
+        px-4 py-2 text-sm shadow-sm 
+        hover:border-gray-400 cursor-pointer
+        transition 
+        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
+        w-24 sm:w-auto
+      "
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
@@ -226,18 +238,16 @@ const JobSection = () => {
                 />
               </PaginationItem>
 
-              {getVisiblePages(totalPages, currentPage).map(
-                (page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      onClick={() => handlePageChange(page)}
-                      isActive={currentPage === page}
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                )
-              )}
+              {getVisiblePages(totalPages, currentPage).map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => handlePageChange(page)}
+                    isActive={currentPage === page}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
 
               <PaginationItem>
                 <PaginationNext
