@@ -109,16 +109,38 @@ const RecentMail = ({ fetchAppliedDatas }) => {
 
     setModalLoading(true);
 
+    const subject = `Follow-up: ${position}`;
+    const body = modalTemplate;
+
+    // === 1. First record follow-up in backend  ===
+    const { ok, json } = await sendFollowUpRequest({
+      emailApplied: email,
+      positionApplied: position,
+      originalMailId: selectedRow._id || null,
+      template: modalTemplate,
+    });
+
+    console.log("ok:", ok);
+    console.log("json:", json);
+
+    if (!ok) {
+      toast.error(json?.message || "Failed to record follow-up");
+      setModalLoading(false);
+      return;
+    }
+
+    // === Backend recorded successfully ===
+    toast.success(json?.message || "Follow-up recorded");
+    await fetchFollowUpStatus(email);
+    closeFollowUpModal();
+
+    // === 2. NOW open mail app or Gmail ===
     const isMobile =
       typeof window !== "undefined" &&
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
       );
 
-    const subject = `Follow-up: ${position}`;
-    const body = modalTemplate;
-
-    // === Open mail client ===
     if (isMobile) {
       const mailto = `mailto:${encodeURIComponent(
         email
@@ -131,22 +153,6 @@ const RecentMail = ({ fetchAppliedDatas }) => {
         email
       )}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       window.open(gmailURL, "_blank");
-    }
-
-    // === Record follow-up ===
-    const { ok, json } = await sendFollowUpRequest({
-      emailApplied: email,
-      positionApplied: position,
-      originalMailId: selectedRow._id || null,
-      template: modalTemplate,
-    });
-
-    if (ok) {
-      toast.success(json?.message || "Follow-up recorded");
-      await fetchFollowUpStatus(email);
-      closeFollowUpModal();
-    } else {
-      toast.error(json?.message || "Failed to record follow-up");
     }
 
     setModalLoading(false);
