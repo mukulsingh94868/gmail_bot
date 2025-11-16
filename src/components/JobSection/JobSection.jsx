@@ -226,7 +226,7 @@ const JobSection = () => {
 
       {/* Pagination using ShadCN */}
       {totalPages > 1 && (
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex justify-center  cursor-pointer">
           <Pagination>
             <PaginationContent>
               <PaginationItem>

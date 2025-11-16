@@ -12,6 +12,7 @@ import {
   LogOut,
   Mail,
   Plus,
+  TableOfContents,
   User,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -211,6 +212,13 @@ const AddPosition = (props) => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="cursor-pointer"
+                  onClick={() => router.push("/faq")}
+                >
+                  <TableOfContents /> FAQ's
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="cursor-pointer"
                   onClick={handleLogout}
                 >
                   <LogOut /> Log out
@@ -314,6 +322,17 @@ const AddPosition = (props) => {
                   >
                     <Mail size={15} className="text-lime-400" />
                     <span className="text-lime-400">Saved Jobs</span>
+                  </button>
+
+                  <button
+                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-violet-600 hover:bg-violet-50 focus:bg-violet-100 transition cursor-pointer"
+                    onClick={() => {
+                      router.push("/faq");
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <TableOfContents size={15} className="text-shadow-yellow-800" />
+                    <span className="text-shadow-yellow-800">FAQ's</span>
                   </button>
 
                   <button
