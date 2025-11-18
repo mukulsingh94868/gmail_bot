@@ -24,18 +24,43 @@ const RecentMail = ({ fetchAppliedDatas }) => {
   }, [fetchAppliedDatas]);
 
   // Fetch follow-up status for each unique email in history
+  // useEffect(() => {
+  //   if (!history || history.length === 0) return;
+  //   console.log('history', history);
+  //   const unique = [...new Set(history.map((h) => h.emailApplied))];
+  //   console.log('unique', unique);
+  //   unique.forEach((email) => {
+  //     fetchFollowUpStatus(email);
+  //   });
+  // }, [history]);
+
   useEffect(() => {
     if (!history || history.length === 0) return;
-    const unique = [...new Set(history.map((h) => h.emailApplied))];
-    unique.forEach((email) => {
-      fetchFollowUpStatus(email);
+
+    // Create a map to hold unique combinations
+    const uniqueMap = new Map();
+
+    history.forEach((h) => {
+      const key = `${h.emailApplied}___${h.positionApplied}`;
+      if (!uniqueMap.has(key)) {
+        uniqueMap.set(key, {
+          email: h.emailApplied,
+          position: h.positionApplied,
+        });
+      }
+    });
+
+    const uniqueList = Array.from(uniqueMap.values());
+
+    uniqueList.forEach((item) => {
+      fetchFollowUpStatus(item.email, item.position);
     });
   }, [history]);
 
-  const fetchFollowUpStatus = async (email) => {
+  const fetchFollowUpStatus = async (email, position) => {
     try {
       const response = await fetchFollowUpData(
-        `followUp/check?emailApplied=${encodeURIComponent(email)}`
+        `followUp/check?emailApplied=${encodeURIComponent(email)}&positionApplied=${position}`
       );
       setFollowUpStatus((prev) => ({ ...prev, [email]: response?.data }));
     } catch (err) {
@@ -127,7 +152,7 @@ const RecentMail = ({ fetchAppliedDatas }) => {
 
     // === Backend success ===
     toast.success("Follow-up recorded");
-    await fetchFollowUpStatus(email);
+    await fetchFollowUpStatus(email, position);
     closeFollowUpModal();
 
     // === 2. Open mail app ===
@@ -256,7 +281,9 @@ const RecentMail = ({ fetchAppliedDatas }) => {
                   </tbody>
                 </table>
               </div>
-            ) : "No recent activity"}
+            ) : (
+              "No recent activity"
+            )}
           </div>
         </div>
 
