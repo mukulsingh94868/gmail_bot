@@ -4,16 +4,19 @@ import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { handleJobPost } from "@/actions/addJobPostActions";
 import toast from "react-hot-toast";
+import { X } from "lucide-react";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
-  loading: () => <p>Loading Text Editor...</p>,
+  loading: () => (
+    <div className="flex h-[200px] items-center justify-center rounded-lg border border-slate-200 bg-slate-50">
+      <span className="text-sm text-slate-400">Loading editor...</span>
+    </div>
+  ),
 });
 
 const JobPost = ({ setShowJobModal }) => {
-  const [formData, setFormData] = useState({
-    JD: "",
-  });
+  const [formData, setFormData] = useState({ JD: "" });
 
   const handleDescriptionChange = (value) => {
     setFormData({ ...formData, JD: value });
@@ -21,60 +24,66 @@ const JobPost = ({ setShowJobModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const payload = formData;
-
-      console.log("Payload:", payload);
-      const result = await handleJobPost("jd/createJd", payload);
-
+      const result = await handleJobPost("jd/createJd", formData);
       if (result?.statusCode === 201) {
         toast.success(result?.message || "Job posted successfully");
-        setTimeout(() => {
-          setShowJobModal(false);
-        }, 1000);
+        setTimeout(() => setShowJobModal(false), 1000);
       } else {
         toast.error(result?.message || "Failed to post job");
       }
-
-      console.log("result", result);
     } catch (error) {
-      console.error("Error posting job:", error);
       toast.error("Something went wrong. Please try again.");
     }
   };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-200 bg-opacity-90 p-4 sm:p-6">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md sm:max-w-lg md:max-w-2xl p-6 sm:p-10 border border-blue-300 transition-all duration-300 ease-in-out">
-        <h2 className="text-xl sm:text-2xl font-extrabold text-blue-800 mb-6 text-center drop-shadow">
-          🚀 Add Job Post
-        </h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={() => setShowJobModal(false)}
+      />
+      <div className="relative w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">New Job Post</h2>
+            <p className="mt-0.5 text-sm text-slate-500">Create a job description for candidates</p>
+          </div>
+          <button
+            onClick={() => setShowJobModal(false)}
+            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+          >
+            <X size={18} />
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <div className="text-editor-wrapper">
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">Job Description</label>
+            <div className="text-editor-wrapper rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500">
               <ReactQuill
                 id="jd"
                 name="JD"
                 value={formData.JD}
                 onChange={handleDescriptionChange}
-                placeholder="Enter the Job Description..."
+                placeholder="Write the job description..."
               />
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 mt-4">
+
+          <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
-              className="w-full sm:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 transition"
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
               onClick={() => setShowJobModal(false)}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 shadow transition"
+              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
             >
-              Add Post
+              Post Job
             </button>
           </div>
         </form>

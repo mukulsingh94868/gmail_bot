@@ -1,146 +1,56 @@
 "use client";
 
 import React, { useState } from "react";
-import { Briefcase, MapPin, Laptop, User, Calendar, Clock } from "lucide-react";
+import { ChevronLeft, Calendar } from "lucide-react";
 import RecruiterHeader from "../RecruiterHeader/RecruiterHeader";
-import Card from "../Card/Card";
 import { useRouter } from "next/navigation";
 
 const JobDetailPageByRecruiter = ({ JobDataById, fetchJobPostData }) => {
   const router = useRouter();
   const [showJobModal, setShowJobModal] = useState(false);
 
-  const otherData = fetchJobPostData?.filter(
-    (item) => item._id !== JobDataById?._id
-  );
+  if (!JobDataById) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
-  if (!JobDataById) return <p>Loading...</p>;
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-4 py-6 flex flex-col">
-      <RecruiterHeader
-        showJobModal={showJobModal}
-        setShowJobModal={setShowJobModal}
-      />
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <RecruiterHeader showJobModal={showJobModal} setShowJobModal={setShowJobModal} />
 
-      <div className="flex-1 w-full mt-6">
-        {/* <div className="bg-white rounded-2xl shadow-lg p-8 w-full h-full">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                {JobDataById?.title}
-              </h1>
-              <p className="text-sm text-gray-500 mt-1">
-                Posted by{" "}
-                <span className="font-semibold">
-                  {JobDataById?.recruiterId?.name}
-                </span>
-              </p>
-            </div>
-            <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                JobDataById?.status === "Open"
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {JobDataById?.status}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <div className="flex items-center text-gray-700">
-              <Briefcase className="w-5 h-5 mr-2 text-blue-600" />
-              {JobDataById?.employmentType}
-            </div>
-            <div className="flex items-center text-gray-700">
-              <MapPin className="w-5 h-5 mr-2 text-blue-600" />
-              {JobDataById?.location}
-            </div>
-            <div className="flex items-center text-gray-700">
-              <Laptop className="w-5 h-5 mr-2 text-blue-600" />
-              {JobDataById?.workMode}
-            </div>
-            <div className="flex items-center text-gray-700">
-              <User className="w-5 h-5 mr-2 text-blue-600" />
-              {JobDataById?.experienceLevel} – {JobDataById?.yearsOfExperience}{" "}
-              yrs
-            </div>
-            <div className="flex items-center text-gray-700">
-              <Calendar className="w-5 h-5 mr-2 text-blue-600" />
-              Posted on {new Date(JobDataById?.createdAt).toDateString()}
-            </div>
-            <div className="flex items-center text-gray-700">
-              <Clock className="w-5 h-5 mr-2 text-blue-600" />
-              Updated {new Date(JobDataById?.updatedAt).toDateString()}
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              Job Description
-            </h2>
-            <p className="text-gray-700 leading-relaxed">
-              {JobDataById?.description}
-            </p>
-          </div>
-
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
-              Skills Required
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {JobDataById?.skillsRequired?.map((skill, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-4">
-            <button
-              className="px-5 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition"
-              onClick={() => alert("Saved for later!")}
-            >
-              Save Job
-            </button>
-            <button
-              className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              onClick={() => alert("Applied successfully!")}
-            >
-              {JobDataById?.isApplied ? "Applied" : "Apply Now"}
-            </button>
-          </div>
-        </div> */}
-
-        <div className="max-w-6xl mx-auto">
+      <div className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl">
           <button
-            className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer"
+            className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-800"
             onClick={() => router.back()}
           >
-            <span className="text-[25px] mb-1">←</span>
-            <span className="text-[15px]">Back</span>
+            <ChevronLeft size={16} />
+            Back
           </button>
-        </div>
 
-        <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-6">
-          <h1 className="text-2xl font-bold text-slate-800 mb-4">
-            Job Details
-          </h1>
-          <div
-            className="prose max-w-none text-slate-700"
-            dangerouslySetInnerHTML={{ __html: JobDataById?.JD }}
-          />
-        </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="mb-6 flex items-center gap-2 text-xs text-slate-400">
+              <Calendar size={12} />
+              Posted on{" "}
+              {new Date(JobDataById.createdAt).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </div>
 
-        {/* <div className="mx-auto w-full grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-8">
-          {otherData?.map((job) => (
-            <Card key={job._id} job={job} />
-          ))}
-        </div> */}
+            <div
+              className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700"
+              dangerouslySetInnerHTML={{ __html: JobDataById.JD }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,17 +1,15 @@
-import React from "react";
-
 const Footer = () => {
   return (
-    <footer className="w-full bg-white border-t border-slate-200 py-4 mt-auto text-center shadow-sm">
-      <span className="text-slate-600 text-sm">
+    <footer className="w-full border-t border-slate-200 bg-white py-4 text-center">
+      <p className="text-xs text-slate-400">
         Developed by Mukul Singh &mdash;{" "}
         <a
-          href="mailto:your@email.com"
-          className="text-blue-600 hover:underline"
+          href="mailto:mukulsingh94868@email.com"
+          className="text-blue-500 transition hover:text-blue-600 hover:underline"
         >
           mukulsingh94868@email.com
         </a>
-      </span>
+      </p>
     </footer>
   );
 };

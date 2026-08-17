@@ -1,93 +1,102 @@
 "use client";
 
 import { deleteSavedJobs } from "@/actions/addPositionActions";
-import { Mail, Trash2 } from "lucide-react";
+import { Bookmark, Trash2, ChevronRight, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import CandidateHeader from "../CandidateHeader/CandidateHeader";
 
 const SavedMails = ({ fetchSavedData }) => {
   const router = useRouter();
   const [savedMailData, setSavedMailData] = useState(fetchSavedData || []);
+  const [headerShowModal, setHeaderShowModal] = useState(false);
 
   useEffect(() => {
     setSavedMailData(fetchSavedData);
   }, [fetchSavedData]);
 
   const extractLocation = (jd) => {
-    const match = jd.match(/📍 Location: (.*?)<\/p>/);
-    return match ? match[1] : "Not Available";
-  };
-
-  const extractEmail = (jd) => {
-    const match = jd.match(/mailto:(.*?)["|']/);
-    return match ? match[1] : "email@example.com";
+    if (!jd) return "Not Available";
+    const match = jd.match(/Location:\s*(.*?)</i);
+    return match ? match[1].trim() : "Not Available";
   };
 
   const handleDeleteJobs = async (jobId) => {
-    const result = await deleteSavedJobs(`savedjobs/${jobId}`);
-    if (result?.statusCode === 200) {
-      toast.success(result?.message || "Job removed from saved list");
+    try {
+      const result = await deleteSavedJobs(`savedjobs/${jobId}`);
+      if (result?.statusCode === 200) {
+        toast.success(result?.message || "Job removed from saved list");
+        setSavedMailData((prev) => prev.filter((item) => item.jobId !== jobId));
+      } else {
+        toast.error(result?.message || "Failed to remove job");
+      }
+    } catch (error) {
+      toast.error("Failed to remove job");
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="container mx-auto px-4 py-6">
-        <div className="mb-10">
-          <button
-            className="flex items-center mb-4 bg-gray-200  px-2 py-0 max-h-fit rounded h-8  justify-center gap-x-1 cursor-pointer"
-            onClick={() => router.back()}
-          >
-            <span className="text-[25px] mb-1">←</span>
-            <span className="text-[15px]">Back</span>
-          </button>
-        </div>
-        <h1 className="text-3xl font-semibold text-center mb-8">Saved Jobs</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {savedMailData?.length > 0 ? (
-            savedMailData?.map((item) => (
-              <div
-                key={item?._id}
-                className="bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden"
-              >
-                <div className="p-6">
-                  <div
-                    className="flex justify-end p-2 rounded-full hover:bg-red-600"
-                    onClick={() => handleDeleteJobs(item?.jobId)}
-                  >
-                    <Trash2 className="text-gray-600 hover:text-red-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-blue-700">
-                    {item?.JD
-                      ? item?.JD?.split("<p>")[0]?.replace(
-                          /<\/?[^>]+(>|$)/g,
-                          ""
-                        )
-                      : "Job Title"}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-2">
-                    <strong>Location:</strong> {extractLocation(item?.JD)}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-2">
-                    <strong>Posted on:</strong>{" "}
-                    {new Date(item?.createdAt).toLocaleDateString()}
-                  </p>
+  const stripHtml = (html) => {
+    if (!html) return "Job Title";
+    return html.replace(/<[^>]+>/g, "").trim().split("\n")[0] || "Job Title";
+  };
 
-                  <div className="mt-4">
+  return (
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <CandidateHeader showModal={headerShowModal} setShowModal={setHeaderShowModal} />
+
+      <div className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="mb-6 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+            Saved Jobs
+          </h2>
+
+          {savedMailData?.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {savedMailData.map((item) => (
+                <div
+                  key={item?._id}
+                  className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+                >
+                  <div className="mb-3 flex items-start justify-between">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                      <Calendar size={12} />
+                      {new Date(item?.createdAt).toLocaleDateString("en-GB", {
+                        day: "2-digit", month: "short", year: "numeric",
+                      })}
+                    </div>
                     <button
-                      className="cursor-pointer p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg w-full text-center font-medium transition"
-                      onClick={() => router.push(`/position/${item?.jobId}`)}
+                      onClick={() => handleDeleteJobs(item?.jobId)}
+                      className="rounded-lg p-1.5 text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                      title="Remove"
                     >
-                      Read More
+                      <Trash2 size={14} />
                     </button>
                   </div>
+
+                  <h3 className="mb-2 line-clamp-2 text-sm font-semibold text-slate-900">
+                    {stripHtml(item?.JD)}
+                  </h3>
+
+                  <p className="mb-4 text-xs text-slate-500">
+                    {extractLocation(item?.JD)}
+                  </p>
+
+                  <button
+                    onClick={() => router.push(`/position/${item?.jobId}`)}
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+                  >
+                    View Details
+                    <ChevronRight size={14} />
+                  </button>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           ) : (
-            <p className="text-center text-gray-500">
-              No saved Jobs Available.
-            </p>
+            <div className="rounded-xl border border-slate-200 bg-white p-12 text-center">
+              <Bookmark className="mx-auto h-8 w-8 text-slate-300" />
+              <p className="mt-3 text-sm text-slate-500">No saved jobs yet</p>
+            </div>
           )}
         </div>
       </div>

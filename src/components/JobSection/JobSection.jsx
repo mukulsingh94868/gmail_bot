@@ -4,6 +4,7 @@ import { fetchAppliedData, saveForLater } from "@/actions/addPositionActions";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import { Bookmark, ChevronRight, Calendar } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -37,9 +38,7 @@ const JobSection = () => {
   };
 
   const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
   const handleLimitChange = (e) => {
@@ -54,33 +53,28 @@ const JobSection = () => {
 
   const handleSaveForLater = async (e, jobId) => {
     e.stopPropagation();
-    const payload = { jobId };
     try {
-      const result = await saveForLater("savedjobs", payload);
+      const result = await saveForLater("savedjobs", { jobId });
       if (result?.statusCode === 201) {
         toast.success(result?.message || "Job saved successfully");
       } else {
         toast.error(result?.message || "Failed to save job");
       }
     } catch (error) {
-      toast.error("Failed to save job: " + (error?.message || error));
+      toast.error("Failed to save job");
     }
   };
 
-  const getVisiblePages = (totalPages, currentPage) => {
+  const getVisiblePages = (total, current) => {
     const delta = 2;
     const range = [];
-    for (
-      let i = Math.max(2, currentPage - delta);
-      i <= Math.min(totalPages - 1, currentPage + delta);
-      i++
-    ) {
+    for (let i = Math.max(2, current - delta); i <= Math.min(total - 1, current + delta); i++) {
       range.push(i);
     }
-    if (currentPage - delta > 2) range.unshift("...");
-    if (currentPage + delta < totalPages - 1) range.push("...");
+    if (current - delta > 2) range.unshift("...");
+    if (current + delta < total - 1) range.push("...");
     range.unshift(1);
-    if (totalPages > 1) range.push(totalPages);
+    if (total > 1) range.push(total);
     return range;
   };
 
@@ -89,32 +83,20 @@ const JobSection = () => {
   }, [currentPage, limit]);
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 py-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4 sm:gap-0">
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900 text-center sm:text-left">
+    <div className="mx-auto w-full max-w-6xl px-4">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
           Available Jobs
         </h2>
-
-        <div className="flex items-center justify-center gap-2 sm:gap-3">
-          <label
-            htmlFor="limit"
-            className="text-sm font-medium text-gray-600 whitespace-nowrap"
-          >
-            Rows per page:
+        <div className="flex items-center gap-2">
+          <label htmlFor="limit" className="text-sm text-slate-500">
+            Show:
           </label>
-
           <select
             id="limit"
             value={limit}
             onChange={handleLimitChange}
-            className="
-        rounded-xl border border-gray-300 bg-white 
-        px-4 py-2 text-sm shadow-sm 
-        hover:border-gray-400 cursor-pointer
-        transition 
-        focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-        w-24 sm:w-auto
-      "
+            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-700 transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
@@ -124,120 +106,82 @@ const JobSection = () => {
         </div>
       </div>
 
-      <div className="relative min-h-[300px]">
+      <div className="relative min-h-[200px]">
         {loading && (
-          <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
-            <p className="text-slate-500">Loading...</p>
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/80">
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+              Loading jobs...
+            </div>
           </div>
         )}
 
-        {/* Job Cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {jobs?.map((job) => {
-            const preview = stripHtml(job.JD).slice(0, 200);
+            const preview = stripHtml(job.JD).slice(0, 180);
             return (
               <div
                 key={job._id}
-                className="flex flex-col bg-white border border-slate-200 shadow-sm rounded-xl p-5 hover:shadow-md transition"
+                className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
               >
-                <div className="flex justify-end">
-                  {job?.isSaved && (
-                    <p className="text-white bg-blue-600 p-[5px] rounded-[8px] text-[10px]">
-                      Saved
-                    </p>
-                  )}
-                </div>
-
-                <div className="text-slate-700 text-sm mb-3 line-clamp-4">
-                  {preview}...
-                </div>
-
-                <ul className="text-sm text-slate-700 space-y-1 mb-4">
-                  <li>
-                    <strong>Posted On:</strong>{" "}
+                <div className="mb-3 flex items-start justify-between">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <Calendar size={12} />
                     {new Date(job.createdAt).toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",
                     })}
-                  </li>
-                </ul>
+                  </div>
+                  {job?.isSaved && (
+                    <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700">
+                      Saved
+                    </span>
+                  )}
+                </div>
 
-                <div className="flex-grow"></div>
+                <p className="mb-4 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-4">
+                  {preview}...
+                </p>
 
-                <div className="flex gap-3 mt-4">
+                <div className="flex gap-2">
                   <button
-                    className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium rounded-lg transition"
                     onClick={(e) => handleSaveForLater(e, job?._id)}
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                   >
-                    Save for Later
+                    <Bookmark size={14} />
+                    Save
                   </button>
                   <button
-                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition cursor-pointer"
                     onClick={() => router.push(`/position/${job._id}`)}
+                    className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
                   >
                     Read More
+                    <ChevronRight size={14} />
                   </button>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {!loading && jobs?.length === 0 && (
+          <div className="py-12 text-center text-sm text-slate-400">
+            No jobs available at the moment.
+          </div>
+        )}
       </div>
 
-      {/* Pagination */}
-      {/* {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
-          <div>
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Prev
-            </button>
-
-            {Array.from({ length: totalPages }, (_, idx) => idx + 1).map(
-              (page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`px-3 py-1 border rounded ${
-                    currentPage === page
-                      ? "bg-blue-600 text-white"
-                      : "hover:bg-slate-100"
-                  }`}
-                >
-                  {page}
-                </button>
-              )
-            )}
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )} */}
-
-      {/* Pagination using ShadCN */}
       {totalPages > 1 && (
-        <div className="mt-8 flex justify-center  cursor-pointer">
+        <div className="mt-8 flex justify-center">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
                   onClick={() => handlePageChange(currentPage - 1)}
-                  className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                  }
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
-
               {getVisiblePages(totalPages, currentPage).map((page) => (
                 <PaginationItem key={page}>
                   <PaginationLink
@@ -248,15 +192,10 @@ const JobSection = () => {
                   </PaginationLink>
                 </PaginationItem>
               ))}
-
               <PaginationItem>
                 <PaginationNext
                   onClick={() => handlePageChange(currentPage + 1)}
-                  className={
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : ""
-                  }
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
                 />
               </PaginationItem>
             </PaginationContent>

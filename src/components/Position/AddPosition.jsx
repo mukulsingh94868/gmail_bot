@@ -4,28 +4,13 @@ import {
   getPositionChangeData,
   positionApplied,
 } from "@/actions/addPositionActions";
-import { getAuthToken, removeAuthToken } from "@/utils/CookieData";
-import {
-  CircleUserRound,
-  FileText,
-  LayoutDashboard,
-  LogOut,
-  Mail,
-  Plus,
-  TableOfContents,
-  User,
-} from "lucide-react";
+import { getAuthToken } from "@/utils/CookieData";
+import { Mail, Sparkles } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import CandidateHeader from "../CandidateHeader/CandidateHeader";
 import AddPositionModal from "../Modal/Modal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 import JobSection from "../JobSection/JobSection";
 
 const AddPosition = (props) => {
@@ -33,11 +18,8 @@ const AddPosition = (props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [position, setPosition] = useState("");
-  const [selectedPositionId, setSelectedPositionId] = useState("");
   const [selectedData, setSelectedData] = useState(null);
-  const [history, setHistory] = useState(fetchAppliedDatas);
   const [showModal, setShowModal] = useState(false);
   const [positionOptions, setPositionOptions] = useState(fetchOptionsData);
   const [userName, setUserName] = useState("");
@@ -47,7 +29,6 @@ const AddPosition = (props) => {
     setPosition(selectedName);
     const selected = positionOptions.find((opt) => opt.name === selectedName);
     if (!selected?._id) return;
-    setSelectedPositionId(selected._id);
     try {
       const result = await getPositionChangeData(
         `position/postionRecord/${selected._id}`
@@ -110,21 +91,12 @@ const AddPosition = (props) => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    removeAuthToken("token");
-    removeAuthToken("role");
-    toast.success("Logged out successfully");
-    router.push("/");
-  };
-
   const decodeJWT = (token) => {
     try {
       const base64Payload = token?.split(".")[1];
       const payload = JSON.parse(atob(base64Payload));
       return payload;
     } catch (err) {
-      console.error("Failed to decode token", err);
       return null;
     }
   };
@@ -132,10 +104,6 @@ const AddPosition = (props) => {
   useEffect(() => {
     setPositionOptions(fetchOptionsData);
   }, [fetchOptionsData]);
-
-  useEffect(() => {
-    setHistory(fetchAppliedDatas);
-  }, [fetchAppliedDatas]);
 
   useEffect(() => {
     (async () => {
@@ -155,280 +123,93 @@ const AddPosition = (props) => {
       setEmail(paramEmail);
     }
   }, [searchParams]);
+
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-[#f8fafc] via-[#e0e7ef] to-[#f1f5f9] px-4 py-0 flex flex-col">
-      <header className="w-full bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-4">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <span
-              className="text-2xl text-blue-700 font-bold tracking-tight cursor-pointer"
-              onClick={() => router.push("/position")}
-            >
-              RecruitLoop
-            </span>
-          </div>
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <CandidateHeader showModal={showModal} setShowModal={setShowModal} />
 
-          {/* Right side - Desktop only */}
-          <div className="hidden md:flex gap-2 items-center">
-            <button
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-all flex gap-2 cursor-pointer"
-              onClick={() => setShowModal(true)}
-            >
-              <Plus /> Add Template
-            </button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <CircleUserRound size={25} className="cursor-pointer" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="start">
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push("/dashboard-analytics")}
-                >
-                  <LayoutDashboard /> Analytics
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push("/template-listing")}
-                >
-                  <FileText /> Templates
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push("/recent-mails")}
-                >
-                  <Mail /> Recent Mails
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push("/saved-mails")}
-                >
-                  <Mail /> Saved Jobs
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push("/faq")}
-                >
-                  <TableOfContents /> FAQ's
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={handleLogout}
-                >
-                  <LogOut /> Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+      <main className="flex-1 px-4 py-8 md:py-12">
+        <div className="mx-auto max-w-2xl">
+          {fetchOptionsData?.length ? (
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <div className="mb-8 text-center">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50">
+                  <Sparkles className="h-6 w-6 text-blue-600" />
+                </div>
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                  {userName ? `Welcome, ${userName}` : "Apply to positions"}
+                </h1>
+                <p className="mt-2 text-sm text-slate-500">
+                  Pick a position, enter the HR email, and send your application with one click.
+                </p>
+              </div>
 
-          {/* Burger menu - Mobile only */}
-          <div className="md:hidden flex items-center">
-            <button
-              className="p-2 rounded-md text-blue-700 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              onClick={() => setMobileMenuOpen((v) => !v)}
-              aria-label="Open menu"
-            >
-              <svg
-                className="w-7 h-7"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                    Position
+                  </label>
+                  <select
+                    value={position}
+                    onChange={handlePositionChange}
+                    className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 transition focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  >
+                    <option value="">Select a position</option>
+                    {positionOptions?.map((pos) => (
+                      <option key={pos._id} value={pos.name}>
+                        {pos.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-        {/* Mobile menu drawer */}
-        {mobileMenuOpen && (
-          <>
-            <div
-              className="fixed inset-0 bg-black/20 z-40 md:hidden"
-              onClick={() => setMobileMenuOpen(false)}
-              aria-label="Close menu"
-            />
-            <div className="fixed top-5 right-4 z-50 md:hidden animate-fade-in">
-              <div className="rounded-2xl shadow-2xl border border-slate-200 bg-white/95 min-w-[210px] max-w-[90vw] flex flex-col py-2 px-2">
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
+                    HR Email
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="hr@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  />
+                </div>
+
                 <button
-                  className="self-end text-slate-400 hover:text-blue-700 text-xl px-2 py-1 focus:outline-none"
-                  onClick={() => setMobileMenuOpen(false)}
-                  aria-label="Close menu"
+                  onClick={handleSendEmail}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99]"
                 >
-                  &times;
+                  <Mail size={18} />
+                  Send Email
                 </button>
-                <nav className="flex flex-col gap-1 mt-1">
-                  <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-emerald-700 hover:bg-emerald-50 focus:bg-emerald-100 transition cursor-pointer"
-                    onClick={() => {
-                      router.push("/dashboard-analytics");
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <LayoutDashboard size={15} className="text-gray-700" />
-                    <span className="text-gray-700">Analytics</span>
-                  </button>
-
-                  <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-teal-600 hover:bg-teal-50 focus:bg-teal-100 transition cursor-pointer"
-                    onClick={() => {
-                      setShowModal(true);
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <Plus size={15} className="text-teal-600" />
-                    <span className="text-teal-600">Add Template</span>
-                  </button>
-
-                  <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-indigo-700 hover:bg-indigo-50 focus:bg-indigo-100 transition cursor-pointer"
-                    onClick={() => {
-                      router.push("/template-listing");
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <FileText size={15} className="from-blue-700" />
-                    <span className="from-blue-700">Templates</span>
-                  </button>
-
-                  <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-amber-600 hover:bg-amber-50 focus:bg-amber-100 transition cursor-pointer"
-                    onClick={() => {
-                      router.push("/recent-mails");
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <Mail size={15} className="text-amber-600" />
-                    <span className="text-amber-600">Recent Mails</span>
-                  </button>
-
-                  <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-violet-600 hover:bg-violet-50 focus:bg-violet-100 transition cursor-pointer"
-                    onClick={() => {
-                      router.push("/saved-mails");
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <Mail size={15} className="text-lime-400" />
-                    <span className="text-lime-400">Saved Jobs</span>
-                  </button>
-
-                  <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-violet-600 hover:bg-violet-50 focus:bg-violet-100 transition cursor-pointer"
-                    onClick={() => {
-                      router.push("/faq");
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <TableOfContents size={15} className="text-shadow-yellow-800" />
-                    <span className="text-shadow-yellow-800">FAQ's</span>
-                  </button>
-
-                  <button
-                    className="flex items-center gap-2 rounded-lg px-4 py-2 text-base font-medium text-rose-700 hover:bg-rose-50 focus:bg-rose-100 transition cursor-pointer"
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut size={15} className="text-rose-700" />
-                    <span className="text-rose-700">Logout</span>
-                  </button>
-                </nav>
               </div>
             </div>
-            <style jsx>{`
-              @keyframes fade-in {
-                from {
-                  opacity: 0;
-                  transform: translateY(-10px);
-                }
-                to {
-                  opacity: 1;
-                  transform: translateY(0);
-                }
-              }
-              .animate-fade-in {
-                animation: fade-in 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-              }
-            `}</style>
-          </>
-        )}
-      </header>
-
-      <main className="flex-1 w-full flex flex-col items-center justify-center py-6 md:py-10">
-        {fetchOptionsData?.length ? (
-          <div className="w-full max-w-2xl bg-white/90 border border-slate-200 shadow-xl rounded-2xl px-8 py-10 flex flex-col gap-4">
-            <div className="text-center">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                Hello {userName}, land your next great role — effortlessly.
+          ) : (
+            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
+                <Mail className="h-6 w-6 text-slate-400" />
+              </div>
+              <h2 className="text-lg font-semibold text-slate-900">
+                No Templates Yet
               </h2>
-              <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-xl mx-auto">
-                Pick a position, personalize your message, and send with one
-                click. We’ll help your application stand out.
+              <p className="mt-2 text-sm text-slate-500">
+                Create your first email template to start applying for positions.
               </p>
+              <button
+                onClick={() => setShowModal(true)}
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700"
+              >
+                Create Template
+              </button>
             </div>
-            <select
-              value={position}
-              onChange={handlePositionChange}
-              className="w-full p-3 rounded-lg border border-slate-300 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-slate-800 text-base"
-            >
-              <option value="">Select Position</option>
-              {positionOptions?.map((pos) => (
-                <option key={pos._id} value={pos.name}>
-                  {pos.name}
-                </option>
-              ))}
-            </select>
+          )}
+        </div>
 
-            <input
-              type="email"
-              placeholder="Enter HR Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 rounded-lg border border-slate-300 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-400 text-slate-800 text-base font-bold"
-            />
-
-            <button
-              onClick={handleSendEmail}
-              className="w-full text-[13px] cursor-pointer py-3 bg-gradient-to-r from-blue-700 to-indigo-600 hover:from-blue-800 hover:to-indigo-700 text-white font-semibold rounded-lg transition-all shadow-lg text-lg tracking-wide flex justify-center gap-2"
-            >
-              <Mail /> Send Email
-            </button>
-          </div>
-        ) : (
-          <div className="w-full max-w-lg bg-white border border-slate-200 shadow-md rounded-xl p-8 flex flex-col items-center text-center">
-            <h2 className="text-xl font-semibold text-slate-800 mb-2">
-              No Templates Found
-            </h2>
-            <p className="text-slate-600 mb-6">
-              You haven’t created any templates yet. Please create a template to
-              apply for a position.
-            </p>
-            <button
-              onClick={() => setShowModal(true)}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm cursor-pointer transition-all"
-            >
-              Create Template
-            </button>
-          </div>
-        )}
+        <div className="mt-12">
+          <JobSection />
+        </div>
       </main>
-
-      <div>
-        <JobSection />
-      </div>
 
       {showModal && (
         <AddPositionModal showModal={showModal} setShowModal={setShowModal} />

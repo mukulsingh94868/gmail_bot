@@ -1,10 +1,8 @@
 "use client";
-import {
-  handleGenerateMail,
-  positionApply,
-} from "@/actions/addPositionActions";
+import { handleGenerateMail, positionApply } from "@/actions/addPositionActions";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Loader2, Sparkles, X } from "lucide-react";
 
 const AddPositionModal = ({ setShowModal }) => {
   const [positionApplied, setPositionApplied] = useState({
@@ -12,7 +10,6 @@ const AddPositionModal = ({ setShowModal }) => {
     emailSubject: "",
     emailBody: "",
   });
-
   const [emailPrompt, setEmailPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -25,15 +22,10 @@ const AddPositionModal = ({ setShowModal }) => {
     }
     setIsRegistering(true);
     try {
-      const result = await positionApply(
-        "position/positionApply",
-        positionApplied
-      );
+      const result = await positionApply("position/positionApply", positionApplied);
       if (result?.statusCode === 200) {
         toast.success(result?.message || "Position added successfully");
-        setTimeout(() => {
-          setShowModal(false);
-        }, 1000);
+        setTimeout(() => setShowModal(false), 1000);
       } else {
         toast.error(result?.message || "Failed to add position");
       }
@@ -46,10 +38,7 @@ const AddPositionModal = ({ setShowModal }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setPositionApplied((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setPositionApplied((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleGenerate = async () => {
@@ -57,15 +46,11 @@ const AddPositionModal = ({ setShowModal }) => {
       toast.error("Please enter a prompt before generating the email.");
       return;
     }
-
     setIsGenerating(true);
-    const payload = { position: emailPrompt };
-
     try {
-      const result = await handleGenerateMail("position/generateMail", payload);
+      const result = await handleGenerateMail("position/generateMail", { position: emailPrompt });
       if (result?.statusCode === 200) {
         toast.success(result?.message || "Email generated successfully");
-
         setPositionApplied((prev) => ({
           ...prev,
           emailSubject: result?.data?.subject || "",
@@ -75,7 +60,6 @@ const AddPositionModal = ({ setShowModal }) => {
         toast.error(result?.message || "Failed to generate email content");
       }
     } catch (error) {
-      console.error("Generate error:", error);
       toast.error("Error generating email: " + (error?.message || error));
     } finally {
       setIsGenerating(false);
@@ -83,111 +67,105 @@ const AddPositionModal = ({ setShowModal }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-200 bg-opacity-90 p-4 sm:p-6">
-      {/* Loader overlay */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={() => !isRegistering && setShowModal(false)}
+      />
+
       {isRegistering && (
-        <div className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center z-50">
-          <svg className="animate-spin h-12 w-12 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-          </svg>
-          <span className="text-blue-700 font-semibold text-lg">Registering...</span>
+        <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          <span className="mt-3 text-sm font-medium text-slate-700">Creating template...</span>
         </div>
       )}
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md sm:max-w-lg md:max-w-xl p-6 sm:p-10 border border-blue-300 transition-all duration-300 ease-in-out">
-        <h2 className="text-xl sm:text-2xl font-extrabold text-blue-800 mb-6 text-center drop-shadow">
-          🚀 Add New Position
-        </h2>
 
-        <form
-          onSubmit={handleAddPosition}
-          className="flex flex-col gap-4 sm:gap-5"
-        >
-          <input
-            type="text"
-            name="position"
-            placeholder="Position Title (e.g., Frontend Developer)"
-            value={positionApplied.position}
-            onChange={handleChange}
-            className="p-3 sm:p-4 rounded-lg border border-blue-300 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-400/50 bg-white shadow-sm placeholder:text-gray-400"
-            required
-          />
+      <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">New Template</h2>
+            <p className="mt-0.5 text-sm text-slate-500">Create an email template for job applications</p>
+          </div>
+          <button
+            onClick={() => setShowModal(false)}
+            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+          >
+            <X size={18} />
+          </button>
+        </div>
 
-          <div className="flex items-start gap-4">
-            <textarea
-              name="emailPrompt"
-              placeholder="Email Prompt (optional — use Generate to auto-fill subject & body)"
-              onChange={(e) => setEmailPrompt(e.target.value)}
-              className="flex-1 p-3 sm:p-4 rounded-lg border border-blue-300 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-400/50 bg-white shadow-sm placeholder:text-gray-400 min-h-[100px] sm:min-h-[120px] resize-none"
-              value={emailPrompt}
-              disabled={isGenerating}
+        <form onSubmit={handleAddPosition} className="space-y-4">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">Position Title</label>
+            <input
+              type="text"
+              name="position"
+              placeholder="e.g. Frontend Developer"
+              value={positionApplied.position}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              required
             />
+          </div>
 
-            <div className="flex-shrink-0">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+              Email Prompt
+              <span className="ml-1 text-slate-400 font-normal">(optional - use AI to generate)</span>
+            </label>
+            <div className="flex gap-2">
+              <textarea
+                placeholder="e.g. Apply for a React developer role at a fintech startup..."
+                onChange={(e) => setEmailPrompt(e.target.value)}
+                className="flex-1 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 min-h-[80px] resize-none"
+                value={emailPrompt}
+                disabled={isGenerating}
+              />
               <button
                 type="button"
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                aria-busy={isGenerating}
-                className={`px-4 py-2 rounded-lg font-medium text-white shadow-sm transition ${isGenerating
-                    ? "bg-blue-500 cursor-not-allowed opacity-90"
-                    : "bg-blue-600 hover:bg-blue-700"
-                  }`}
+                className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-lg border border-blue-200 bg-blue-50 px-3 py-2.5 text-sm font-medium text-blue-700 transition hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isGenerating ? (
-                  <span className="inline-flex items-center gap-2">
-                    <svg
-                      className="animate-spin h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      />
-                    </svg>
-                    Generating...
-                  </span>
+                  <Loader2 size={14} className="animate-spin" />
                 ) : (
-                  "Generate"
+                  <Sparkles size={14} />
                 )}
+                Generate
               </button>
             </div>
           </div>
 
-          <input
-            type="text"
-            name="emailSubject"
-            placeholder="Email Subject"
-            value={positionApplied.emailSubject}
-            onChange={handleChange}
-            className="p-3 sm:p-4 rounded-lg border border-blue-300 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-400/50 bg-white shadow-sm placeholder:text-gray-400"
-            required
-          />
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">Email Subject</label>
+            <input
+              type="text"
+              name="emailSubject"
+              placeholder="e.g. Application for Frontend Developer Role"
+              value={positionApplied.emailSubject}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              required
+            />
+          </div>
 
-          <textarea
-            name="emailBody"
-            placeholder="Email Body Content..."
-            value={positionApplied.emailBody}
-            onChange={handleChange}
-            className="p-3 sm:p-4 rounded-lg border border-blue-300 text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-400/50 bg-white shadow-sm placeholder:text-gray-400 min-h-[100px] sm:min-h-[120px] resize-none"
-            required
-          />
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">Email Body</label>
+            <textarea
+              name="emailBody"
+              placeholder="Write your email body content..."
+              value={positionApplied.emailBody}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 min-h-[120px] resize-none"
+              required
+            />
+          </div>
 
-          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 mt-2">
+          <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
-              className="w-full sm:w-auto px-4 py-2 bg-gray-300 text-gray-800 rounded-lg font-medium hover:bg-gray-400 transition"
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
               onClick={() => setShowModal(false)}
               disabled={isGenerating}
             >
@@ -195,11 +173,10 @@ const AddPositionModal = ({ setShowModal }) => {
             </button>
             <button
               type="submit"
-              className={`w-full sm:w-auto px-5 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 shadow transition ${isGenerating ? "opacity-80 cursor-not-allowed" : ""
-                }`}
               disabled={isGenerating}
+              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Add Position
+              Add Template
             </button>
           </div>
         </form>
