@@ -1,5 +1,5 @@
 
-import { fetchTemplates } from '@/actions/templateListingActons';
+import { fetchTemplates } from '@/actions/templateListingActions';
 import TemplatesListing from '@/components/TemplateListing/TemplateListing';
 import React from 'react'
 

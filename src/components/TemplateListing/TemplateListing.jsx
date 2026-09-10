@@ -3,12 +3,12 @@
 import {
   deleteUserPositions,
   getUserPositionsById,
-} from "@/actions/templateListingActons";
+} from "@/actions/templateListingActions";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Edit3, Trash2, ChevronLeft, FileText, Mail } from "lucide-react";
-import { EditPositionModal } from "../Modal/EditPositionModel";
+import { EditPositionModal } from "../Modal/EditPositionModal";
 import CandidateHeader from "../CandidateHeader/CandidateHeader";
 
 const TemplatesListing = (props) => {

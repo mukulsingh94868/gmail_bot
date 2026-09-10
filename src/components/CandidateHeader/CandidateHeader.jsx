@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { getAuthToken, removeAuthToken } from "@/utils/CookieData";
+import { decodeJWT } from "@/utils/jwt";
 import toast from "react-hot-toast";
 import { useRouter, usePathname } from "next/navigation";
 
@@ -42,16 +43,6 @@ const CandidateHeader = ({ showModal, setShowModal }) => {
     removeAuthToken("role");
     toast.success("Logged out successfully");
     router.push("/");
-  };
-
-  const decodeJWT = (token) => {
-    try {
-      const base64Payload = token?.split(".")[1];
-      const payload = JSON.parse(atob(base64Payload));
-      return payload;
-    } catch (err) {
-      return null;
-    }
   };
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { getAuthToken, removeAuthToken } from "@/utils/CookieData";
+import { decodeJWT } from "@/utils/jwt";
 import { CircleUserRound, LogOut, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -24,16 +25,6 @@ const RecruiterHeader = ({ showJobModal, setShowJobModal }) => {
     removeAuthToken("role");
     toast.success("Logged out successfully");
     router.push("/");
-  };
-
-  const decodeJWT = (token) => {
-    try {
-      const base64Payload = token?.split(".")[1];
-      const payload = JSON.parse(atob(base64Payload));
-      return payload;
-    } catch (err) {
-      return null;
-    }
   };
 
   useEffect(() => {

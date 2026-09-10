@@ -1,5 +1,5 @@
 import { fetchAppliedData } from "@/actions/addPositionActions";
-import { fetchTemplates } from "@/actions/templateListingActons";
+import { fetchTemplates } from "@/actions/templateListingActions";
 import DashboardAnalyticsComp from "@/components/DashboardAnalyticsComp/DashboardAnalyticsComp";
 import React from "react";
 

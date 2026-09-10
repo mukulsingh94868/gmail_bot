@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import CandidateHeader from "../CandidateHeader/CandidateHeader";
 import AddPositionModal from "../Modal/Modal";
 import JobSection from "../JobSection/JobSection";
+import { decodeJWT } from "@/utils/jwt";
 
 const AddPosition = (props) => {
   const { fetchOptionsData, fetchAppliedDatas } = props;
@@ -88,16 +89,6 @@ const AddPosition = (props) => {
       }
     } catch (error) {
       toast.error("Error recording applied position");
-    }
-  };
-
-  const decodeJWT = (token) => {
-    try {
-      const base64Payload = token?.split(".")[1];
-      const payload = JSON.parse(atob(base64Payload));
-      return payload;
-    } catch (err) {
-      return null;
     }
   };
 
