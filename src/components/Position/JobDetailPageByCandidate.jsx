@@ -135,6 +135,7 @@ const JobDetailPageByCandidate = ({
                   </p>
 
                   <div className="flex gap-2">
+                    {/* Saved Jobs: disabled for now
                     <button
                       onClick={(e) => handleSaveForLater(e, item?._id)}
                       className="rl-btn-secondary flex-1 px-3 py-2"
@@ -142,6 +143,7 @@ const JobDetailPageByCandidate = ({
                       <Bookmark size={14} />
                       Save
                     </button>
+                    */}
                     <button
                       onClick={() => router.push(`/position/${item._id}`)}
                       className="rl-btn-primary flex-1 px-3 py-2"

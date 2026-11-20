@@ -152,12 +152,14 @@ const JobSection = () => {
                         year: "numeric",
                       })}
                     </span>
+                    {/* Saved Jobs: disabled for now
                     {job?.isSaved && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-semibold text-rose-600">
                         <Bookmark size={10} className="fill-current" />
                         Saved
                       </span>
                     )}
+                    */}
                   </div>
                 </div>
 
@@ -166,6 +168,7 @@ const JobSection = () => {
                 </p>
 
                 <div className="flex gap-2">
+                  {/* Saved Jobs: disabled for now
                   <button
                     onClick={(e) => handleSaveForLater(e, job?._id)}
                     className="rl-btn-secondary flex-1 px-3 py-2"
@@ -173,6 +176,7 @@ const JobSection = () => {
                     <Bookmark size={14} />
                     Save
                   </button>
+                  */}
                   <button
                     onClick={() => router.push(`/position/${job._id}`)}
                     className="rl-btn-primary flex-1 px-3 py-2"

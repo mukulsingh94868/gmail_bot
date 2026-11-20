@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import {
   Bookmark,
   Briefcase,
+  ArrowLeft,
   ChevronRight,
   Clock,
   FileText,
@@ -28,7 +29,8 @@ const candidateNav = [
   { label: "Dashboard", href: "/dashboard-analytics", icon: LayoutDashboard },
   { label: "Templates", href: "/template-listing", icon: FileText, countKey: "templates" },
   { label: "Recent Activity", href: "/recent-mails", icon: Clock, countKey: "recent" },
-  { label: "Saved Jobs", href: "/saved-mails", icon: Bookmark },
+  // Saved Jobs: disabled for now
+  // { label: "Saved Jobs", href: "/saved-mails", icon: Bookmark },
   { label: "FAQ & Help", href: "/faq", icon: HelpCircle },
 ];
 
@@ -58,6 +60,9 @@ const AppShell = ({ children, role, user = {}, counts = {} }) => {
   const homeHref = isRecruiter ? "/recruiter-dashboard" : "/position";
   const activeItem = navItems.find((item) => isActivePath(pathname, item.href));
   const isDetailPage = /^\/(position|recruiter-dashboard)\/[^/]+$/.test(pathname);
+  // Mobile-only back button: skip on the home screen (nothing to go back to)
+  // and on detail pages, which already have their own back button.
+  const showMobileBack = pathname !== homeHref && !isDetailPage;
   const displayName = user.name || (isRecruiter ? "Recruiter" : "Candidate");
   const initials = getInitials(displayName);
 
@@ -229,7 +234,18 @@ const AppShell = ({ children, role, user = {}, counts = {} }) => {
           </div>
         </header>
 
-        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</main>
+        <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          {showMobileBack && (
+            <button
+              onClick={() => router.back()}
+              className="mb-4 inline-flex cursor-pointer items-center gap-1.5 rounded-lg py-1 text-sm font-semibold text-slate-500 transition hover:text-brand-700 lg:hidden"
+            >
+              <ArrowLeft size={16} />
+              Back
+            </button>
+          )}
+          {children}
+        </main>
 
         <Footer />
       </div>

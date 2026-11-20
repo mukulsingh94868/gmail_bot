@@ -227,7 +227,7 @@ const AddPosition = (props) => {
         )}
       </section>
 
-      <JobSection />
+      {/* <JobSection /> */}
 
       {showModal && (
         <AddPositionModal showModal={showModal} setShowModal={setShowModal} />
