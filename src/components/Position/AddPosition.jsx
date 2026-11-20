@@ -5,18 +5,25 @@ import {
   positionApplied,
 } from "@/actions/addPositionActions";
 import { getAuthToken } from "@/utils/CookieData";
-import { Mail, Sparkles } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import {
+  AtSign,
+  ChevronsUpDown,
+  ExternalLink,
+  FileText,
+  Mail,
+  Plus,
+  Sparkles,
+} from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import CandidateHeader from "../CandidateHeader/CandidateHeader";
 import AddPositionModal from "../Modal/Modal";
 import JobSection from "../JobSection/JobSection";
+import EmptyState from "../ui/EmptyState";
 import { decodeJWT } from "@/utils/jwt";
 
 const AddPosition = (props) => {
-  const { fetchOptionsData, fetchAppliedDatas } = props;
-  const router = useRouter();
+  const { fetchOptionsData } = props;
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [position, setPosition] = useState("");
@@ -116,91 +123,111 @@ const AddPosition = (props) => {
   }, [searchParams]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
-      <CandidateHeader showModal={showModal} setShowModal={setShowModal} />
+    <div className="w-full max-w-full space-y-8 sm:space-y-12">
+      <section className="mx-auto w-full max-w-xl lg:max-w-2xl">
+        <div className="mb-6 text-center">
+          {userName && (
+            <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-brand-100/80 px-3 py-1 text-xs font-semibold text-brand-800">
+              <Sparkles size={12} />
+              Welcome, {userName}
+            </span>
+          )}
+          <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Send Application Email
+          </h1>
+          <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
+            Select your email pitch template, enter the recruiter&apos;s email, and launch directly in Gmail.
+          </p>
+        </div>
 
-      <main className="flex-1 px-4 py-8 md:py-12">
-        <div className="mx-auto max-w-2xl">
-          {fetchOptionsData?.length ? (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-              <div className="mb-8 text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50">
-                  <Sparkles className="h-6 w-6 text-blue-600" />
-                </div>
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-                  {userName ? `Welcome, ${userName}` : "Apply to positions"}
-                </h1>
-                <p className="mt-2 text-sm text-slate-500">
-                  Pick a position, enter the HR email, and send your application with one click.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    Position
-                  </label>
+        {fetchOptionsData?.length ? (
+          <div className="rl-card p-5 sm:p-7">
+            <div className="space-y-5">
+              <div>
+                <label htmlFor="send-template" className="rl-label">
+                  <FileText size={15} className="text-brand-700" />
+                  Choose Template
+                </label>
+                <div className="relative">
                   <select
+                    id="send-template"
                     value={position}
                     onChange={handlePositionChange}
-                    className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 transition focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                    className="rl-input cursor-pointer appearance-none pr-10"
                   >
-                    <option value="">Select a position</option>
+                    <option value="">Select a position template</option>
                     {positionOptions?.map((pos) => (
                       <option key={pos._id} value={pos.name}>
                         {pos.name}
                       </option>
                     ))}
                   </select>
-                </div>
-
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                    HR Email
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="hr@company.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 transition placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  <ChevronsUpDown
+                    size={16}
+                    className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                   />
                 </div>
+              </div>
 
-                <button
-                  onClick={handleSendEmail}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99]"
-                >
-                  <Mail size={18} />
-                  Send Email
-                </button>
+              <div>
+                <label htmlFor="send-email" className="rl-label">
+                  <AtSign size={15} className="text-brand-700" />
+                  HR / Recruiter Email
+                </label>
+                <div className="relative">
+                  <input
+                    id="send-email"
+                    type="email"
+                    placeholder="e.g. hr@company.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="rl-input pr-10"
+                    autoComplete="off"
+                  />
+                  <Mail
+                    size={16}
+                    className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                  />
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-                <Mail className="h-6 w-6 text-slate-400" />
-              </div>
-              <h2 className="text-lg font-semibold text-slate-900">
-                No Templates Yet
-              </h2>
-              <p className="mt-2 text-sm text-slate-500">
-                Create your first email template to start applying for positions.
+
+              <button onClick={handleSendEmail} className="rl-btn-primary w-full py-3">
+                <Mail size={17} />
+                Open &amp; Send in Gmail
+                <ExternalLink size={15} className="opacity-80" />
+              </button>
+              <p className="-mt-2 text-center text-xs text-slate-500">
+                Opens Gmail on desktop or your mail app on mobile, with your template pre-filled.
               </p>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between gap-3 border-t border-brand-100 pt-4 text-xs">
+              <span className="text-slate-500">Need a different pitch?</span>
               <button
                 onClick={() => setShowModal(true)}
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-700"
+                className="inline-flex cursor-pointer items-center gap-1 font-semibold text-brand-700 transition hover:text-brand-900"
               >
-                Create Template
+                <Plus size={14} />
+                New template
               </button>
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <EmptyState
+            icon={Mail}
+            title="No Templates Yet"
+            description="Create your first email template to start applying for positions."
+            action={
+              <button onClick={() => setShowModal(true)} className="rl-btn-primary">
+                <Plus size={16} />
+                Create Template
+              </button>
+            }
+          />
+        )}
+      </section>
 
-        <div className="mt-12">
-          <JobSection />
-        </div>
-      </main>
+      <JobSection />
 
       {showModal && (
         <AddPositionModal showModal={showModal} setShowModal={setShowModal} />

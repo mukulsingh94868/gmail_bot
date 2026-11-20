@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, ChevronRight } from "lucide-react";
+import { Briefcase, Calendar, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const Card = ({ job }) => {
@@ -14,26 +14,31 @@ const Card = ({ job }) => {
   const previewText = stripHtml(job.JD).slice(0, 200);
 
   return (
-    <div className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-      <div className="mb-3 flex items-center gap-1.5 text-xs text-slate-400">
-        <Calendar size={12} />
-        {new Date(job.createdAt).toLocaleDateString("en-GB", {
-          day: "2-digit", month: "short", year: "numeric",
-        })}
+    <article className="rl-card group flex flex-col p-5 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-700 transition group-hover:bg-brand-100">
+          <Briefcase size={18} />
+        </span>
+        <span className="inline-flex items-center gap-1.5 font-mono text-[11px] text-slate-400">
+          <Calendar size={12} />
+          {new Date(job.createdAt).toLocaleDateString("en-GB", {
+            day: "2-digit", month: "short", year: "numeric",
+          })}
+        </span>
       </div>
 
-      <p className="mb-4 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-4">
+      <p className="mb-5 line-clamp-4 flex-1 text-sm leading-relaxed text-slate-600">
         {previewText}...
       </p>
 
       <button
         onClick={() => router.push(`/recruiter-dashboard/${job._id}`)}
-        className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
+        className="rl-btn-primary w-full px-3 py-2"
       >
         View Details
         <ChevronRight size={14} />
       </button>
-    </div>
+    </article>
   );
 };
 

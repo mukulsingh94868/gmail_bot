@@ -1,18 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { ChevronLeft, ChevronDown, HelpCircle } from "lucide-react";
-import CandidateHeader from "../CandidateHeader/CandidateHeader";
+import { ChevronDown } from "lucide-react";
+import PageHeader from "../ui/PageHeader";
 
 const faqData = [
   {
     question: "How do I apply for a position using RecruitLoop?",
+    intro: "RecruitLoop streamlines applications into a focused workflow:",
     answer: [
-      "Select your desired job position from the dropdown menu.",
-      "Enter the HR's email address in the provided field.",
-      "Click \"Send Email\" to open Gmail with a pre-filled application template.",
-      "You can also download your resume if required.",
+      { title: "Select a template:", text: "Choose your desired job position from the template dropdown." },
+      { title: "Enter recruiter details:", text: "Type the HR's email address in the provided field." },
+      { title: "Send in Gmail:", text: "Click \"Open & Send in Gmail\" to open Gmail with a pre-filled application template." },
+      { title: "Resume:", text: "You can also download your resume if required." },
     ],
   },
   {
@@ -29,31 +29,52 @@ const faqData = [
   },
 ];
 
-const FaqItem = ({ question, answer }) => {
-  const [open, setOpen] = useState(false);
+const FaqItem = ({ id, question, intro, answer, defaultOpen = false }) => {
+  const [open, setOpen] = useState(defaultOpen);
+  const isSteps = typeof answer[0] === "object";
+
   return (
-    <div className="rounded-xl border border-slate-200 bg-white transition hover:border-slate-300">
+    <div
+      className={`rl-card overflow-hidden transition ${open ? "border-brand-200" : "hover:border-brand-200"}`}
+    >
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between p-4 text-left"
+        aria-expanded={open}
+        aria-controls={`${id}-panel`}
+        className="flex w-full cursor-pointer items-center justify-between gap-4 px-5 py-4 text-left"
       >
-        <span className="text-sm font-medium text-slate-900">{question}</span>
-        <ChevronDown
-          size={16}
-          className={`shrink-0 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
+        <span className="font-display text-sm font-semibold text-slate-900 sm:text-[15px]">{question}</span>
+        <span
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition ${open ? "bg-brand-700 text-white" : "bg-brand-50 text-brand-700"
+            }`}
+        >
+          <ChevronDown size={15} className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        </span>
       </button>
       <div
-        className={`overflow-hidden transition-all duration-200 ${open ? "max-h-60" : "max-h-0"}`}
+        id={`${id}-panel`}
+        className={`grid transition-all duration-200 ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
       >
-        <div className="border-t border-slate-100 px-4 pb-4 pt-3">
-          <ul className="space-y-1.5">
-            {answer.map((line, i) => (
-              <li key={i} className="text-sm text-slate-600">
-                {answer.length > 1 ? `\u2022 ${line}` : line}
-              </li>
-            ))}
-          </ul>
+        <div className="overflow-hidden">
+          <div className="border-t border-brand-100 px-5 pb-5 pt-4 text-sm text-slate-600">
+            {intro && <p className="mb-3">{intro}</p>}
+            {isSteps ? (
+              <ol className="space-y-2">
+                {answer.map((step, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[11px] font-bold text-brand-800">
+                      {i + 1}
+                    </span>
+                    <span>
+                      <strong className="font-semibold text-slate-900">{step.title}</strong> {step.text}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              answer.map((line, i) => <p key={i}>{line}</p>)
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -61,34 +82,16 @@ const FaqItem = ({ question, answer }) => {
 };
 
 const FaqComponent = () => {
-  const router = useRouter();
-  const [headerShowModal, setHeaderShowModal] = useState(false);
-
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
-      <CandidateHeader showModal={headerShowModal} setShowModal={setHeaderShowModal} />
-
-      <div className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl">
-          <button
-            className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-800"
-            onClick={() => router.back()}
-          >
-            <ChevronLeft size={16} />
-            Back
-          </button>
-
-          <div className="mb-6 flex items-center gap-2">
-            <HelpCircle size={20} className="text-blue-600" />
-            <h2 className="text-xl font-bold tracking-tight text-slate-900">FAQ / Help</h2>
-          </div>
-
-          <div className="space-y-3">
-            {faqData.map((faq) => (
-              <FaqItem key={faq.question} question={faq.question} answer={faq.answer} />
-            ))}
-          </div>
-        </div>
+    <div className="mx-auto">
+      <PageHeader
+        title="FAQ"
+        description="Find clear answers to common questions about using RecruitLoop for outreach and job tracking."
+      />
+      <div className="space-y-3">
+        {faqData.map((faq, i) => (
+          <FaqItem key={faq.question} id={`faq-${i}`} defaultOpen={i === 0} {...faq} />
+        ))}
       </div>
     </div>
   );

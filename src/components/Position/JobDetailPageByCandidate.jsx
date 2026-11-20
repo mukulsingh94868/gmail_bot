@@ -1,11 +1,10 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft, Calendar, ChevronRight } from "lucide-react";
+import { ArrowLeft, Bookmark, Briefcase, Calendar, ChevronRight, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { saveForLater } from "@/actions/addPositionActions";
 import toast from "react-hot-toast";
-import CandidateHeader from "../CandidateHeader/CandidateHeader";
 
 const JobDetailPageByCandidate = ({
   JobDataCandidateById,
@@ -15,9 +14,9 @@ const JobDetailPageByCandidate = ({
 
   if (!JobDataCandidateById) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+      <div className="flex min-h-[60vh] items-center justify-center">
         <div className="flex items-center gap-2 text-sm text-slate-500">
-          <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand-700 border-t-transparent" />
           Loading...
         </div>
       </div>
@@ -58,91 +57,105 @@ const JobDetailPageByCandidate = ({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
-      <CandidateHeader />
+    <div className="mx-auto max-w-4xl">
+      <button
+        className="mb-5 inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-slate-500 transition hover:text-brand-700"
+        onClick={() => router.push("/position")}
+      >
+        <ArrowLeft size={16} />
+        Back to Jobs
+      </button>
 
-      <div className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-4xl">
-          <button
-            className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-slate-800"
-            onClick={() => router.push("/position")}
-          >
-            <ArrowLeft size={16} />
-            Back to Jobs
-          </button>
-
-          <div className="mb-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <div className="mb-6 flex items-center gap-2 text-xs text-slate-400">
-              <Calendar size={12} />
-              Posted on{" "}
-              {new Date(JobDataCandidateById.createdAt).toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
-            </div>
-
-            <div
-              className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700"
-              dangerouslySetInnerHTML={{ __html: JobDataCandidateById.JD }}
-            />
-
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={() => handleApply(JobDataCandidateById?.JD)}
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-              >
-                Apply Now
-              </button>
+      <article className="rl-card mb-10 overflow-hidden">
+        <div className="flex flex-col gap-4 border-b border-brand-100 bg-linear-to-r from-brand-50 to-white p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-brand-800 to-brand-500 text-white shadow-md shadow-brand-700/25">
+              <Briefcase size={22} />
+            </span>
+            <div>
+              <h1 className="font-display text-lg font-bold text-slate-900 sm:text-xl">Job Description</h1>
+              <p className="mt-0.5 inline-flex items-center gap-1.5 font-mono text-xs text-slate-500">
+                <Calendar size={12} />
+                Posted on{" "}
+                {new Date(JobDataCandidateById.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </p>
             </div>
           </div>
-
-          {fetchAllJobPostDataFiltered?.length > 0 && (
-            <div>
-              <h2 className="mb-4 text-lg font-bold tracking-tight text-slate-900">
-                Recommended Jobs
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {fetchAllJobPostDataFiltered.map((item) => {
-                  const preview = stripHtml(item.JD).slice(0, 160);
-                  return (
-                    <div
-                      key={item._id}
-                      className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-                    >
-                      <div className="mb-2 text-xs text-slate-400">
-                        {new Date(item.createdAt).toLocaleDateString("en-GB", {
-                          day: "2-digit", month: "short", year: "numeric",
-                        })}
-                      </div>
-
-                      <p className="mb-4 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3">
-                        {preview}...
-                      </p>
-
-                      <div className="flex gap-2">
-                        <button
-                          onClick={(e) => handleSaveForLater(e, item?._id)}
-                          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => router.push(`/position/${item._id}`)}
-                          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-                        >
-                          Read More
-                          <ChevronRight size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          <button
+            onClick={() => handleApply(JobDataCandidateById?.JD)}
+            className="rl-btn-primary hidden sm:inline-flex"
+          >
+            <Send size={15} />
+            Apply Now
+          </button>
         </div>
-      </div>
+
+        <div
+          className="jd-content p-5 sm:p-7"
+          dangerouslySetInnerHTML={{ __html: JobDataCandidateById.JD }}
+        />
+
+        <div className="border-t border-brand-100 bg-brand-50/40 p-5 sm:flex sm:justify-center sm:p-6">
+          <button
+            onClick={() => handleApply(JobDataCandidateById?.JD)}
+            className="rl-btn-primary w-full px-8 py-3 sm:w-auto"
+          >
+            <Send size={15} />
+            Apply Now
+          </button>
+        </div>
+      </article>
+
+      {fetchAllJobPostDataFiltered?.length > 0 && (
+        <section>
+          <h2 className="mb-4 font-display text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+            Recommended Jobs
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {fetchAllJobPostDataFiltered.map((item) => {
+              const preview = stripHtml(item.JD).slice(0, 160);
+              return (
+                <article
+                  key={item._id}
+                  className="rl-card group flex flex-col p-5 transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-lg"
+                >
+                  <div className="mb-3 flex items-center gap-1.5 font-mono text-[11px] text-slate-400">
+                    <Calendar size={12} />
+                    {new Date(item.createdAt).toLocaleDateString("en-GB", {
+                      day: "2-digit", month: "short", year: "numeric",
+                    })}
+                  </div>
+
+                  <p className="mb-5 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-600">
+                    {preview}...
+                  </p>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => handleSaveForLater(e, item?._id)}
+                      className="rl-btn-secondary flex-1 px-3 py-2"
+                    >
+                      <Bookmark size={14} />
+                      Save
+                    </button>
+                    <button
+                      onClick={() => router.push(`/position/${item._id}`)}
+                      className="rl-btn-primary flex-1 px-3 py-2"
+                    >
+                      Read More
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

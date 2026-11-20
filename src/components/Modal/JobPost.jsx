@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { handleJobPost } from "@/actions/addJobPostActions";
 import toast from "react-hot-toast";
-import { X } from "lucide-react";
+import { BriefcaseBusiness } from "lucide-react";
+import ModalShell from "../ui/ModalShell";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-[200px] items-center justify-center rounded-lg border border-slate-200 bg-slate-50">
+    <div className="flex h-[260px] items-center justify-center bg-brand-50/50">
       <span className="text-sm text-slate-400">Loading editor...</span>
     </div>
   ),
@@ -38,57 +39,37 @@ const JobPost = ({ setShowJobModal }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={() => setShowJobModal(false)}
-      />
-      <div className="relative w-full max-w-2xl rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900">New Job Post</h2>
-            <p className="mt-0.5 text-sm text-slate-500">Create a job description for candidates</p>
+    <ModalShell
+      title="New Job Post"
+      description="Create a job description for candidates"
+      icon={BriefcaseBusiness}
+      onClose={() => setShowJobModal(false)}
+      maxWidth="sm:max-w-2xl"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="jd" className="rl-label">Job Description</label>
+          <div className="rl-editor overflow-hidden rounded-xl border border-brand-100 bg-white transition focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/15">
+            <ReactQuill
+              id="jd"
+              name="JD"
+              value={formData.JD}
+              onChange={handleDescriptionChange}
+              placeholder="Write the job description... Include the HR email so candidates can apply."
+            />
           </div>
-          <button
-            onClick={() => setShowJobModal(false)}
-            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-          >
-            <X size={18} />
-          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">Job Description</label>
-            <div className="text-editor-wrapper rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500">
-              <ReactQuill
-                id="jd"
-                name="JD"
-                value={formData.JD}
-                onChange={handleDescriptionChange}
-                placeholder="Write the job description..."
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <button
-              type="button"
-              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-              onClick={() => setShowJobModal(false)}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700"
-            >
-              Post Job
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex flex-col-reverse gap-2 border-t border-brand-100 pt-4 sm:flex-row sm:justify-end sm:gap-3">
+          <button type="button" className="rl-btn-outline" onClick={() => setShowJobModal(false)}>
+            Cancel
+          </button>
+          <button type="submit" className="rl-btn-primary">
+            Post Job
+          </button>
+        </div>
+      </form>
+    </ModalShell>
   );
 };
 

@@ -1,11 +1,11 @@
 const Footer = () => {
   return (
-    <footer className="w-full border-t border-slate-200 bg-white py-4 text-center">
+    <footer className="border-t border-brand-100 px-4 py-4 text-center sm:px-6 lg:px-8">
       <p className="text-xs text-slate-400">
         Developed by Mukul Singh &mdash;{" "}
         <a
           href="mailto:mukulsingh94868@email.com"
-          className="text-blue-500 transition hover:text-blue-600 hover:underline"
+          className="font-medium text-brand-600 transition hover:text-brand-800 hover:underline"
         >
           mukulsingh94868@email.com
         </a>
